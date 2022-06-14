@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-//const jwt_secret = process.env.ACCESS_TOKEN_SECRET
+const jwt_secret = process.env.ACCESS_TOKEN_SECRET || ""
 
 const SERVER_PORT = process.env.SERVER_PORT || 3000;
 const MONGO_USERNAME = process.env.MONGO_USERNAME || ""
@@ -20,7 +20,11 @@ const config ={
         port:SERVER_PORT
     },
     access:{
-        secret:"jwt_secret"
+        secret:jwt_secret
+    },
+    mail:{
+        user: process.env.USER,
+        pass: process.env.PASS
     }
 }
 

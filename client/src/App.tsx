@@ -1,33 +1,46 @@
 
 import React from 'react';
-import { useState } from 'react';
 import './App.css';
 import ProductPage from "./pages/ProductPage";
-import { userEndPoint } from './Apis';
-import axios from 'axios';
 import NavBar from './components/NavBar';
-import RegistrationForm from './components/RegistrationForm';
 import Cart from './components/Cart';
 import LoginForm from './components/LoginForm';
-import ChangePassword from './components/ChangePassword';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
+import { Route, Routes, BrowserRouter } from 'react-router-dom';
+import CreateItem from './components/CreateItem';
+import Footer from './components/Footer';
+import RegistrationForm from './components/RegistrationForm';
 
-const UserContext = React.createContext(null);
-const username = "sagarkhadka";
-function App(){
- 
-   
- 
+
+function App() {
+
+
+
   return (
     <>
-      {/* <NavBar/>
-     <ProductPage/>
-     <RegistrationForm/>
-     <LoginForm/>
-     <Cart/> */}
-     <ChangePassword/>
+  
+      <BrowserRouter>
+      <NavBar />
+        <Routes>
+          <Route path="/" element={<><ProductPage /> </>} />
+
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/register" element={<RegistrationForm />} />
+          <Route path='/resetPassword' element={<ResetPassword/>}/>
+          <Route path ="/forgotPassword" element={<ForgotPassword/>}/>
+           <Route path='/carts' element={<Cart/>}/>
+           <Route path='/item' element={<CreateItem/>}/>
+
+        </Routes>
+        <Footer/>
+      </BrowserRouter> 
+      {/* <ReactComponent/> */}
+
+   
     </>
   )
-    
+
 }
 
 export default App;

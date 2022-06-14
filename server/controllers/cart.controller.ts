@@ -4,7 +4,8 @@ import { CartModel } from "../Models/cart.model";
 // import { findCarts } from "../service/user.service";
 import mongoose from "mongoose";
 import logger from "../logger/logger";
-import {updateCartService, findCartService, emptyCartService} from "../service/cart.service"
+import {updateCartService, findCartService, emptyCartService, removeItemService} from "../service/cart.service"
+import { UserModel } from "../Models/user.model";
 
 
 
@@ -14,8 +15,7 @@ export async function findAll(req:Request,res:Response){
 }
 
 export const updateCartHandler= async (req:Request, res:Response)=>{
-  const { username}= req.params;
-  const {item} = req.body;
+  const {username,  item} = req.body;
   const carts = await updateCartService(username, item)
   return res.send(carts).status(200) 
 }
@@ -24,7 +24,7 @@ export const updateCartHandler= async (req:Request, res:Response)=>{
 
 export const createCartHandler = async (req:Request, res:Response)=>{
   const {username, totalQty, totalPrice, items} = req.body
-    
+
   const Cart =  await CartModel.create({
       _id: new mongoose.Types.ObjectId(),
       username,
@@ -33,26 +33,46 @@ export const createCartHandler = async (req:Request, res:Response)=>{
       totalPrice
 
   })
+
       
-  return Cart.save().then((Cart) => {
-    res.status(200).send({Cart});
-  })
+  return Cart.save()
   .catch((err:any) => {
     res.status(500).send(err);
   });
+ }
 
-    
-}
 
-export const deleteCartHandler = async(req:Request, res:Response)=>{
-    const username = req.params.username;
-    const {item} = req.body;
-    const cart = await emptyCartService(username, item);
+
+export const emptyCartHandler = async(req:Request, res:Response)=>{
+
+    const { username} = req.body;
+    const cart = await emptyCartService(username);
     return res.status(200).send("Cart deleted successful")
 }
 export const findCart = async(req:Request, res:Response)=>{
-   const username= req.params.username;
+   const {username}= req.body;
    const Carts = await findCartService(username);
    return res.send(Carts).status(200)
 
 }
+export const removeItemHandler= async(req:Request, res:Response)=>{
+   const {productId, username} = req.body;
+   const cart = await findCartService(username);
+   if(cart){
+   const carts = await removeItemService(username, productId)
+   return res.send(carts).status(200)
+   }
+   res.send(500)
+}
+
+// export const deleteItemHandler= async(req:Request, res:Response)=>{
+//   const {username}= req.body;
+//   const cart = await findCartService(username);
+//   const carts = CartModel.updateOne({
+//     username
+//   },{
+//     $pull:{
+
+//     }
+//   })
+// }

@@ -1,4 +1,5 @@
 import { Cart, CartModel } from "../Models/cart.model";
+import { Item } from "../Models/item.model";
 import {User, UserModel} from "../Models/user.model"
 
 
@@ -10,6 +11,7 @@ export async function updateCartService(username : User["username"], item:object
               username
           },
           {
+            
             $push:{
             items:item
           } 
@@ -26,7 +28,7 @@ export async function findCartService(username:Cart["username"]){
     username
   })
 }
-export async function emptyCartService(username : User["username"], item:object){  
+export async function emptyCartService(username : User["username"]){  
        
   return await CartModel.updateOne(
 
@@ -35,7 +37,7 @@ export async function emptyCartService(username : User["username"], item:object)
        },
        {
          $set:{
-         items:item
+         items:[]
        } 
        }
 
@@ -44,4 +46,17 @@ export async function emptyCartService(username : User["username"], item:object)
 
 
 
+}
+
+export function  removeItemService(username:Cart["username"], productId:Item["productId"]){
+  return CartModel.updateOne(
+  {
+    username
+  },
+  {
+    $pull:{
+      items:  {productId:productId}
+
+    }
+  })
 }

@@ -5,6 +5,8 @@ import { generateUsername } from "unique-username-generator"
 import { object, string, TypeOf, } from "zod";
 import { NextFunction } from "express";
 import  * as bcrypt from "bcrypt"
+import crypto from "crypto";
+
 
 
 export const registerUserSchema = {
@@ -82,8 +84,13 @@ export class User {
     password: string
     @prop({ required: true })
     address: string
+    @prop({default:crypto.randomBytes(12).toString('hex')})
+    resetPassword: string
     public async comparePassword(password: string): Promise<boolean> {
         return   await bcrypt.compare(password, this.password);
+    }
+    public  compareToken(token:string):Boolean{
+        return (token ===this.resetPassword)
     }
 }
 

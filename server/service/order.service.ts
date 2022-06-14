@@ -2,20 +2,33 @@ import { CartModel, Cart } from "../Models/cart.model";
 import { Order, OrderModel } from "../Models/order.model";
 import { UserModel, User } from "../Models/user.model";
 import mongoose from "mongoose";
-import crypto from "crypto"
 
 
-export async function orderService(username: Order["username"], sellerId: Order["sellerId"], productId: Order["productId"], totalPrice:Order["totalPrice"]) {
-    return await OrderModel.create({
+
+export async function orderService(username: Order["username"], items:Order["items"], totalPrice:Order["totalPrice"]) {
+    const order = await OrderModel.create({
         _id: new mongoose.Types.ObjectId(),
-        username, sellerId, productId,totalPrice
+        username, items, totalPrice
 
 
     })
+    return order.save()
 
+
+}
+export async function pushItemsService(username:Order["username"], item:Order["items"]){
+    const order =await OrderModel.findOneAndUpdate({
+        username:username
+    },{
+        $push:{
+            items:item
+        }
+    })
+
+    return order
 }
 export  function findOrderServiceByUsername(username:Order["username"]){
     return  OrderModel.find({
-        username: username
+        username
     })
 }

@@ -1,7 +1,8 @@
 import React from 'react'
 import { userEndPoint } from '../Apis'
-const username = 'ernme'
-const changePasswordEndPoint = `${userEndPoint}/changePassword/${username}`
+
+
+const changePasswordEndPoint = `${userEndPoint}/changePassword`
 
 const ChangePassword = () => {
   return (

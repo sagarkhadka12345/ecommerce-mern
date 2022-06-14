@@ -1,8 +1,8 @@
 import { Item, ItemModel } from "../Models/item.model";
 
-export function findItemsBySellerService(sellerId: Item["sellerId"]) {
+export function findItemsBySellerService(seller: Item["seller"]) {
     return ItemModel.find({
-        sellerId
+        seller
     })
 }
 

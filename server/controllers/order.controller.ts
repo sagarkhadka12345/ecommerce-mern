@@ -1,25 +1,41 @@
 import { OrderModel, Order } from "../Models/order.model";
 import mongoose from "mongoose";
 import express, { Request, Response} from "express" ;
-import { findOrderServiceByUsername, orderService } from "../service/order.service";
+import { findOrderServiceByUsername, orderService, pushItemsService } from "../service/order.service";
 
 
 
 
 
 
-export const orderHandler = async (req:Request, res:Response) =>{
-    const {username}= req.params
-    const { sellerId, productId, totalPrice} = req.body;
-    let orders =await orderService(username, sellerId, productId, totalPrice)
+export const createOrderHandler = async (req:Request, res:Response)=>{
 
-    return res.send(orders).status(200)
-
-
+    const { username, items, totalPrice} = req.body
+      
+    const Cart =  await OrderModel.create({
+        _id: new mongoose.Types.ObjectId(),
+        username,
+        items,
+        totalPrice
+  
+    })
+        
+    return Cart.save().then((Cart) => {
+      res.status(200)
+    })
+    .catch((err:any) => {
+      res.status(500).send(err);
+    });
 }
-
 export  const findOrderByUsername = async (req:Request, res:Response) => {
     const {username}= req.params;
     const orders = await findOrderServiceByUsername(username)
     return res.send(orders).status(200)   
 } 
+
+export const pushItems = async (req:Request,res:Response)=>{
+
+    const {username, item} = req.body;
+    const order = pushItemsService(username, item)
+    return res.send(order)
+}

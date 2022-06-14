@@ -2,12 +2,17 @@ import express, { NextFunction, Request, Response } from "express"
 import { LoginType, UserModel } from "../Models/user.model";
 import mongoose from "mongoose";
 import { RegisterUserBody, registerUserSchema } from "../Models/user.model";
-// import {validateUserService} from "../service/user.service"
-
 import dotenv from "dotenv"
+import  * as bcrypt from "bcrypt"
+import { changePasswordService, findUserService, resetPasswordService } from "../service/user.service";
+import crypto from "crypto";
+import {sendMail} from "../helpers/mailer"
+import jwt from "jsonwebtoken"
+import config from "../config/config";
 
-import { changePasswordService, findUserService } from "../service/user.service";
+
 dotenv.config();
+
 
 
 
@@ -27,7 +32,8 @@ export const createUserHandler = async (req: Request<{},{}, RegisterUserBody>, r
     })
     return user.save()
         .then(() => {
-            res.send(user)
+            const token =jwt.sign({username:username},config.access.secret)
+            res.send(token)
         })
         .catch((err: any) => {
             if (err.code === 1000) {
@@ -40,7 +46,11 @@ export const loginUser =async (req:Request<{}, {}, LoginType>, res:Response) => 
     const {username, password} = req.body 
    const user = await findUserService(username)
    if (user &&  await user.comparePassword(password)) {
-    return res.send(user).status(200)
+    
+
+    const token =jwt.sign({username:username},config.access.secret)
+    
+    return res.status(200).send(token)
   }
 
    return res
@@ -57,8 +67,7 @@ export const findAllUsers = async (req:Request, res:Response) =>{
   }
 
 export const changePassword = async (req:Request, res:Response)=>{
-    const {username} = req.params
-    const {password, newPassword }= req.body
+    const {username, password, newPassword }= req.body
     const user = await findUserService(username)
     if(user && await user.comparePassword(password)){
         await changePasswordService(username, password, newPassword) 
@@ -70,15 +79,46 @@ export const changePassword = async (req:Request, res:Response)=>{
 
 
 }
-//   export const validateUser =async (req:Request, res:Response, next:NextFunction)=>{
-//     const  {username, password, email }= req.body
-//    const user = await validateUserService(username, password, email)
-//    next()
+export const forgotPassword = async (req:Request, res:Response)=>{
 
-// }
+    const {username}= req.body;
+    const user = await UserModel.findOne({username})
+    if(!user){
+        return res.send("User doesn't exist")
+    }
+    const token =  crypto.randomBytes(12).toString('hex')
+    
+    const update = await UserModel.updateOne({
+        username
+    },{
+        $set:{
+            resetPassword:token
+        }
+    })
+   await sendMail({from: "sagarkhadka@mail.com", to: "sagarkhadka@mail.com", subject: "Forgot Password", html: `<a href='${token}'<button>Reset Password</button>` })
+    return res.status(404).send(token)
+    
+
+}
+export const resetPassword = async (req:Request, res:Response)=>{
+    const {username, password, token}= req.body;
+    const user = await findUserService(username);
+    const newToken =  crypto.randomBytes(12).toString('hex')
+    const hash =await bcrypt.hash(password, 10)
+    if(user &&  user.compareToken(token)){
+      await resetPasswordService(username, newToken, hash);
+      return res.status(200).redirect("http://localhost:3001")
+    }
+    return res.status(404).send("user not found")
+}
 
 
+export const findUser = async(req:Request, res:Response)=>{
+   const {username}=req.body.username;
+    const user = await findUserService(username)
+    return res.status(200).send(req.body)
 
+}
 
 
 

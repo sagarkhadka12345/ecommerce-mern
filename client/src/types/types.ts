@@ -1,11 +1,13 @@
 export interface Item {
+    sellerId:string
     img: string,
     quantity: number,
     _id: string,
     name: string,
-    sellerId: string,
+    seller: string,
     price: number,
     type: string,
+    productId:string
     _v: number
 }
 export interface CartItem {
@@ -13,7 +15,8 @@ export interface CartItem {
     quantity:number,
     price:number,
     name:string,
-    img:string
+    img:string,
+    seller:string
 }
 export interface Cart{
     username:string,
@@ -24,8 +27,9 @@ export interface Cart{
 }
 export interface Order{
     orderId:string,
+    items:Array<CartItem>,
     username:string,
-    sellerId:string,
+    seller:string,
     date:string,
     productId:string
 }
@@ -36,4 +40,8 @@ export interface User{
     password:string,
     username:string,
     address:string
+}
+export interface Token{
+    username:string,
+    iat:string
 }

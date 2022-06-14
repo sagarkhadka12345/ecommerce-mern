@@ -6,26 +6,44 @@ import {findItemsByTypeService} from "../service/item.service"
 
 
 
-
-export const createItemHandler = async (req: Request, res: Response) => {
-    const {name, sellerId, price, type} = req.body
-
-    const Item = await ItemModel.create({
+export const createItemHandler = async (req:Request, res:Response)=>{
+  //  const {seller}=req.body.seller;
+    const {seller, name, price, type,productId, img} = req.body
+      
+    const Item =  await ItemModel.create({
         _id: new mongoose.Types.ObjectId(),
-        name, sellerId,price,type
-
+      seller, name, price, type,productId, img
+  
     })
-    return Item.save()
-        .then(() => {
-            res.send({Item})
-        })
-        .catch((err: any) => {
-            if (err.code === 1000) {
-                return res.send("Item already created")
-            }
-            return res.send(err.message).status(200)
-        })
+        
+    return Item.save().then((Item) => {
+      res.status(200).send(Item);
+    })
+    .catch((err:any) => {
+      res.status(500).send(err);
+    });
 }
+
+// export const createItemHandler = async (req: Request, res: Response) => {
+//     const {sellerId}= req.body.username
+//     const { name,price, type, productId, img} = req.body
+
+//     const Item = await ItemModel.create({
+//         _id: new mongoose.Types.ObjectId(),
+//         name, sellerId,price,type, productId,img
+
+//     })
+//     return Item.save()
+//         .then(() => {
+//             res.send(req.body)
+//         })
+//         .catch((err: any) => {
+//             if (err.code === 1000) {
+//                 return res.send("Item already created")
+//             }
+//             return res.send(err.message).status(200)
+//         })
+// }
 
 export const findAllItems = async (req:Request, res:Response) =>{
  
@@ -43,8 +61,8 @@ export const findItem = async (req:Request, res:Response) =>{
 }
 
 export const findItemsBySeller =async (req:Request, res:Response) => {
-    const {sellerId} = req.params;
-    const item = await findItemsBySellerService(sellerId)
+    const {seller} = req.params;
+    const item = await findItemsBySellerService(seller)
     return res.status(200).send(item)
     
 }

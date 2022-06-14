@@ -1,48 +1,73 @@
-import React from 'react'
-import { Cart } from '../types/types'
+import React, { useEffect, useState } from 'react'
+import { Cart, CartItem } from '../types/types'
 import { cartEndPoint, orderEndPoint } from '../Apis'
 import axios from 'axios'
 
-const username = "sagar"
 
-const confirmCheckout = (props:{"totalQtyState":number}) => {
-  const emptyCartEndPoint = `${cartEndPoint}/deleteCart/${username}`
-  const createOrderEndPoint = `${orderEndPoint}/createOrder/${username}`
-  const checkOutHandler =()=>{
-    try{
-      // axios.post(emptyCartEndPoint,{
-      //   "item":[]    
-      // }).then(res=>console.log(res)
-      // )
-      axios.post(createOrderEndPoint,{
-        "user":"sagar",
-        "sellerId":"seller",
-        "productId":"00f",
-        "totalPrice":props.totalQtyState
 
-      })
-      window.location.reload()
-      
 
-    }
-    catch(err){
-      console.log(err);
-      
-    }
-  }
-  return (
-    <>    <div>
-         Are You sure You want to checkout??
-         <div>{props.totalQtyState}</div>
-
-    </div>
-    <div><button onClick={checkOutHandler}> Yes!! Check Out</button>
-    <button onClick={()=>{
-      window.location.reload()
-    }}>No I want to recheck</button>
-      </div></>
-    
-  )
+interface Iprops {
+  items:any[],
+  totalQtyState :number,
+  totalPriceState:number
 }
 
-export default confirmCheckout
+const ConfirmCheckout = (props:Iprops):JSX.Element => {
+  
+   
+
+
+
+  const emptyCartEndPoint = `${cartEndPoint}/emptyCart`
+  const createOrderEndPoint = `${orderEndPoint}/createOrder`
+
+  const checkOutHandler=  () => {
+
+    
+       axios.post(createOrderEndPoint, {
+        items: props.items,
+        totalPrice: props.totalPriceState
+
+      },{headers:{
+        "Authorization":"Bearer "+ localStorage.getItem("token")
+      }})
+      
+      axios.post(emptyCartEndPoint,{username:""},{headers:{
+        "Authorization":"Bearer "+ localStorage.getItem("token")
+      }});
+      window.location.reload()
+
+
+    }
+    
+    
+ 
+  
+    
+  if(props){
+    return (
+      <>    <div>
+        Are You sure You want to checkout??
+        <div>The total number of the Products is :</div>
+        <div> {props.totalQtyState}
+        </div>
+        <div>The total price products is {props.totalPriceState} </div>
+      </div>
+        <div>
+          <button onClick={checkOutHandler}> Yes!! Check Out</button>
+          <button onClick={() => {
+            window.location.reload()
+          }}>No I want to recheck</button>
+        </div></>
+
+    )}
+    else{
+      return(
+        <div>Cart not available</div>
+      )
+    }
+  }
+
+
+
+export default ConfirmCheckout
