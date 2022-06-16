@@ -8,7 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const jwt_secret = process.env.ACCESS_TOKEN_SECRET || "";
-const SERVER_PORT = process.env.SERVER_PORT || 3000;
+const SERVER_PORT = process.env.PORT || 3000;
 var server_host = process.env.YOUR_HOST || "0.0.0.0";
 const MONGO_USERNAME = process.env.MONGO_USERNAME || "";
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD || "";
