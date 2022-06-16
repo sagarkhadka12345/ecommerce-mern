@@ -26,7 +26,8 @@
     "zod-express-middleware": "^1.4.0"
   },
   "scripts": {
-    "start": "node builds/index.js"
+    "start": "node builds/server.js",
+    "develop": "nodemon server.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
