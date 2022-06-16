@@ -14,6 +14,8 @@ import jwt from "jsonwebtoken"
 import { authenticateToken, authenticateTokenSeller } from './middlewares/authentication';
 import { loginBodySchema, registerUserSchema } from './Models/user.model';
 import {processRequestBody} from "zod-express-middleware";
+import { newItemSchema } from './Models/item.model';
+import path from "path"
 
 
 
@@ -25,9 +27,17 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
-app.use(cors({
-  origin:"*"
-}))
+// app.use(cors({
+//   origin:"*"
+// }))
+
+
+  app.use(express.static("build"));
+  app.get("/", (req:Request, res:Response)=>{
+    res.sendFile(path.resolve(__dirname, "build", "index.html"))
+  })
+
+
 
 app.listen(config.server.port, () => {
   logger.info(`Listening to port ${config.server.port} `)
@@ -63,7 +73,7 @@ app.get("/item/findAll", findAllItems)
 app.get("/item/find/:itemId", findItem )
 app.get("/item/type/:typeId", findItemsByType)
 app.get("/item/seller/:seller", findItemsBySeller)
-app.post("/item/createItem",authenticateTokenSeller, createItemHandler)
+app.post("/item/createItem",authenticateTokenSeller, processRequestBody(newItemSchema.body), createItemHandler)
 app.post("/order/createOrder",authenticateToken, createOrderHandler);
 app.get("/order/find/:username", findOrderByUsername);
 app.post("/user/createUser",processRequestBody(registerUserSchema.body), createUserHandler)
@@ -78,6 +88,10 @@ app.post("/order/createOrder", authenticateToken, createOrderHandler)
 
 
 
+
+app.use("*", (req:Request, res:Response)=>{
+  return res.send("The Page isn't available in the website")
+})
 
 
 

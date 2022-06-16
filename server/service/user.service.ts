@@ -11,8 +11,8 @@ import { ItemModel } from "../Models/item.model";
 
 
 
-export function findUserService(username : User["username"]){
-    return UserModel.findOne({
+export async function findUserService(username : User["username"]){
+    return await UserModel.findOne({
         username
     })
 }

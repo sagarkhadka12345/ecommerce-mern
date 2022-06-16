@@ -1,18 +1,18 @@
 import express, { NextFunction, Request, Response } from "express"
-import { ItemModel } from "../Models/item.model";
+import { ItemModel, newItemBody } from "../Models/item.model";
 import mongoose from "mongoose";
 import { findItemsBySellerService  } from "../service/item.service";
 import {findItemsByTypeService} from "../service/item.service"
 
 
 
-export const createItemHandler = async (req:Request, res:Response)=>{
+export const createItemHandler = async (req:Request<{},{},newItemBody>, res:Response)=>{
   //  const {seller}=req.body.seller;
-    const {seller, name, price, type,productId, img} = req.body
+    const {seller, name, price, type, img} = req.body
       
     const Item =  await ItemModel.create({
         _id: new mongoose.Types.ObjectId(),
-      seller, name, price, type,productId, img
+      seller, name, price, type , img
   
     })
         

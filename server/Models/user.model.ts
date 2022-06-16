@@ -3,7 +3,6 @@ import { getModelForClass, prop, pre } from "@typegoose/typegoose";
 import { Cart } from "./cart.model";
 import { generateUsername } from "unique-username-generator"
 import { object, string, TypeOf, } from "zod";
-import { NextFunction } from "express";
 import  * as bcrypt from "bcrypt"
 import crypto from "crypto";
 

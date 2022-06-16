@@ -95,7 +95,7 @@ export const forgotPassword = async (req:Request, res:Response)=>{
             resetPassword:token
         }
     })
-   await sendMail({from: "sagarkhadka@mail.com", to: "sagarkhadka@mail.com", subject: "Forgot Password", html: `<a href='${token}'<button>Reset Password</button>` })
+  // await sendMail({from: "sagarkhadka@mail.com", to: "sagarkhadka@mail.com", subject: "Forgot Password", html: `<a href='${token}'<button>Reset Password</button>` })
     return res.status(404).send(token)
     
 
