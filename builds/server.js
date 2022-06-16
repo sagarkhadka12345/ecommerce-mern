@@ -31,8 +31,8 @@ app.use(express_1.default.json());
 // app.use(cors({
 //   origin:"*"
 // }))
-app.use(express_1.default.static("build"));
-app.get("/", (req, res) => {
+app.use(express_1.static("build"));
+app.get("*", (req, res) => {
   res.sendFile(path_1.default.resolve(__dirname, "build", "index.html"));
 });
 app.listen(config_1.default.server.port, () => {
