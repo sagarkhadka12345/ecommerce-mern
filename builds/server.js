@@ -35,7 +35,7 @@ app.use(express_1.default.static("build"));
 app.get("/", (req, res) => {
   res.sendFile(path_1.default.resolve(__dirname, "build", "index.html"));
 });
-app.listen(config_1.default.server.port, config_1.default.server.host, () => {
+app.listen(config_1.default.server.port, () => {
   logger_1.default.info(`Listening to port ${config_1.default.server.port} `);
 });
 app.use((req, res, next) => {
