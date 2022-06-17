@@ -14,10 +14,13 @@ export async function findAll(req:Request,res:Response){
     return res.send(Cart).status(200)
 }
 
+
+
 export const updateCartHandler= async (req:Request, res:Response)=>{
   const {username,  item} = req.body;
   const carts = await updateCartService(username, item)
   return res.send(carts).status(200) 
+
 }
 
 

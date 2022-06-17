@@ -1,6 +1,11 @@
-export const itemEndPoint = "http://localhost:9090/item";
-export const cartEndPoint = "http://localhost:9090/cart";
-export const userEndPoint = "http://localhost:9090/user";
-export const orderEndPoint = "http://localhost:9090/order";
+
+   
+
+
+
+export const itemEndPoint = `${process.env.host || "http://localhost:"}${process.env.PORT || 3000}/item`;
+export const cartEndPoint = `${process.env.host || "http://localhost:"}${process.env.PORT || 3000}/cart`;
+export const userEndPoint = `${process.env.host || "http://localhost:"}${process.env.PORT || 3000}/user`;
+export const orderEndPoint = `${process.env.host || "http://localhost:"}${process.env.PORT || 3000}/order`;
 
 

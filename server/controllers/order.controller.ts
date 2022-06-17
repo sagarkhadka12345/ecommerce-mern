@@ -1,7 +1,7 @@
 import { OrderModel, Order } from "../Models/order.model";
 import mongoose from "mongoose";
 import express, { Request, Response} from "express" ;
-import { findOrderServiceByUsername, orderService, pushItemsService } from "../service/order.service";
+import { findOrderServiceByUsername, pushItemsService } from "../service/order.service";
 
 
 
@@ -21,7 +21,7 @@ export const createOrderHandler = async (req:Request, res:Response)=>{
     })
         
     return Cart.save().then((Cart) => {
-      res.status(200)
+      res.status(200).send(Cart)
     })
     .catch((err:any) => {
       res.status(500).send(err);

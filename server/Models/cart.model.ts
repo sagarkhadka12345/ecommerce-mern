@@ -1,4 +1,4 @@
-import { getModelForClass, prop } from "@typegoose/typegoose"
+import { getModelForClass, prop, Ref } from "@typegoose/typegoose"
 import { Item } from "./item.model"
 import { User } from "./user.model"
 
@@ -9,7 +9,7 @@ export class Cart {
     @prop({required:true, unique:true})
     username: User["username"]
     @prop({})
-    items:[Item]
+    items:[Ref<Item>]
     @prop({required:true, default:Date.now})
     modifiedTime:Date
     @prop({required:true, default:0})

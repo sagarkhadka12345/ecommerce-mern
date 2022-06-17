@@ -14,9 +14,9 @@ interface received {
 const CartComponent: React.FC = (): JSX.Element => {
   //states
   const [cart, setCart] = useState<Cart[]>([]);
-  const [carts, setCarts] = useState<received>();
-  const [totalQtyState, setTotalQty] = useState<number>(0);
-  const [totalPriceState, setTotalPrice] = useState<number>(0);
+  // const [carts, setCarts] = useState<received>();
+  // const [totalQtyState, setTotalQty] = useState<number>(0);
+  // const [totalPriceState, setTotalPrice] = useState<number>(0);
   // const [checkout, setCheckOut] = useState(false);
   const [productId, setProductId] = useState<string>("");
   const [orderItem, setOrderItem] = useState<any[]>([]);
@@ -40,14 +40,11 @@ const CartComponent: React.FC = (): JSX.Element => {
         },
       })
       .then((res) => {
-        setCart(res.data);
-        return setCarts(res.data);
+        return setCart(res.data);
       });
   }, []);
 
   const remove = () => {
-    console.log(productId);
-
     axios.post(
       removeItemEndPoint,
       {
@@ -68,43 +65,27 @@ const CartComponent: React.FC = (): JSX.Element => {
   const emptyCartEndPoint = `${cartEndPoint}/emptyCart`;
   const createOrderEndPoint = `${orderEndPoint}/createOrder`;
 
-  const checkout = () => {
-    swal
-      .fire({
-        html: "<p>Do you really want to check out</p>",
-        showCloseButton: true,
-        showCancelButton: true,
-        showConfirmButton: true,
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          checkOutHandler();
-        } else if (result.isDenied) {
-          return window.location.reload();
-        }
-      });
-  };
+  // const checkout = () => {};
+  const isInitialMount = useRef(true);
+  const item = cart.map((data: any) => data.items as any);
 
-  const checkOutHandler = () => {
-    setTotalQty(totalQty);
-    setTotalPrice(totalPrice);
-    if (carts) {
-      setOrderItem(carts[0].items);
-    }
-    axios.post(
-      createOrderEndPoint,
-      {
-        items: orderItem,
-        totalPrice: totalPriceState,
-      },
-      {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
+  async function check() {
+    await axios
+      .post(
+        createOrderEndPoint,
+        {
+          items: item[0],
+          totalPrice: totalPrice,
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      )
+      .catch((err) => console.log(err));
 
-    axios.post(
+    await axios.post(
       emptyCartEndPoint,
       { username: "" },
       {
@@ -114,14 +95,66 @@ const CartComponent: React.FC = (): JSX.Element => {
       }
     );
     window.location.reload();
+  }
+
+  // useEffect(() => {
+  //   if (isInitialMount.current) {
+  //     isInitialMount.current = false;
+  //   } else {
+  //     const work = async () => {
+  //       await axios
+  //         .post(
+  //           createOrderEndPoint,
+  //           {
+  //             items: orderItem,
+  //             totalPrice: totalPriceState,
+  //           },
+  //           {
+  //             headers: {
+  //               Authorization: "Bearer " + localStorage.getItem("token"),
+  //             },
+  //           }
+  //         )
+  //         .catch((err) => console.log(err));
+
+  //       await axios.post(
+  //         emptyCartEndPoint,
+  //         { username: "" },
+  //         {
+  //           headers: {
+  //             Authorization: "Bearer " + localStorage.getItem("token"),
+  //           },
+  //         }
+  //       );
+  //       window.location.reload();
+  //     };
+  //     work();
+  //   }
+  // }, [totalQtyState, totalPriceState, carts]);
+
+  const checkOutHandler = async () => {
+    swal
+      .fire({
+        html: "<p>Do you really want to check out</p>",
+        showCloseButton: true,
+        showCancelButton: true,
+        showConfirmButton: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          check();
+        } else if (result.isDenied) {
+          return window.location.reload();
+        }
+      });
   };
 
   if (cart.length > 0) {
     return (
-      <div className="border p-2 bg-gray-100 h-[100vh] mb-12">
+      <div className="border p-2 bg-gray-100 h-[100vh] pb-12 ">
         Cart:
         {cart.map((data: Cart, index) => (
-          <div key={index}>
+          <div key={index} className="pb-16">
             <div
               key={index}
               className="item my-2 py-2 px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  m-2 shadow-sm"
@@ -173,7 +206,13 @@ const CartComponent: React.FC = (): JSX.Element => {
                 }
               </div>
 
-              <button onClick={checkout}>Check out</button>
+              <button
+                onClick={() => {
+                  checkOutHandler();
+                }}
+              >
+                Check out
+              </button>
             </div>
             {}
           </div>
@@ -183,7 +222,7 @@ const CartComponent: React.FC = (): JSX.Element => {
   } else {
     return (
       <div>
-        <div> There is no item in the cart. Please Add Items to your Cart</div>
+        <div> Please login First </div>
       </div>
     );
   }

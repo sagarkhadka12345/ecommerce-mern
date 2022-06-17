@@ -5,17 +5,7 @@ import mongoose from "mongoose";
 
 
 
-export async function orderService(username: Order["username"], items:Order["items"], totalPrice:Order["totalPrice"]) {
-    const order = await OrderModel.create({
-        _id: new mongoose.Types.ObjectId(),
-        username, items, totalPrice
 
-
-    })
-    return order.save()
-
-
-}
 export async function pushItemsService(username:Order["username"], item:Order["items"]){
     const order =await OrderModel.findOneAndUpdate({
         username:username

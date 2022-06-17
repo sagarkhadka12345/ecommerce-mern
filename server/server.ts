@@ -2,10 +2,10 @@ import {db} from './DataBase/dataBase';
 import express, { Request, Response, NextFunction } from "express";
 import config from "./config/config";
 import logger from "./logger/logger";
-import { createItemHandler , findAllItems} from "../server/controllers/item.controller"
+import { createItemHandler , findAllItems} from "./controllers/item.controller"
 import { createCartHandler, updateCartHandler , findCart, removeItemHandler, emptyCartHandler } from './controllers/cart.controller';
 import { createUserHandler , findAllUsers, loginUser, changePassword, forgotPassword, resetPassword, findUser } from './controllers/user.controller';
-import {findItem} from "../server/controllers/item.controller"
+import {findItem} from "./controllers/item.controller"
 import { findItemsBySeller } from "./controllers/item.controller"
 import { findItemsByType } from "./controllers/item.controller";
 import { findOrderByUsername, createOrderHandler, pushItems} from './controllers/order.controller';
@@ -27,9 +27,9 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
-// app.use(cors({
-//   origin:"*"
-// }))
+app.use(cors({
+  origin:"*"
+}))
 
 
   app.use(express.static("build"));

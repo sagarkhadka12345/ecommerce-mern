@@ -9,7 +9,7 @@ import { User } from "./user.model";
 
 
 export class Order{
-@prop({required:true, unique:true, default:crypto.randomBytes(12).toString('hex')})
+@prop({required:true, default:crypto.randomBytes(12).toString('hex')})
 orderId:string
 @prop({required:true})
 username:User["username"]

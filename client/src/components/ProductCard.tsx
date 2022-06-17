@@ -22,27 +22,38 @@ const ProductCard = (props: Item) => {
     setQuantity(quantity + 1);
   };
   const addToCart = async () => {
-    await axios.post(
-      upDateCartEndPoint,
-      {
-        item: {
-          name: props.name,
-          seller: props.seller,
-          sellerId: props.sellerId,
-          price: props.price,
-          type: props.type,
-          quantity: quantity,
-          productId: props.productId,
+    await axios
+      .post(
+        upDateCartEndPoint,
+        {
+          item: {
+            name: props.name,
+            seller: props.seller,
+            sellerId: props.sellerId,
+            price: props.price,
+            type: props.type,
+            quantity: quantity,
+            productId: props.productId,
+          },
         },
-      },
-      { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
-    );
-
-    swal.fire({
-      icon: "success",
-      html: "The item has been added to the cart successfully",
-      showCloseButton: true,
-    });
+        {
+          headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+        }
+      )
+      .then((res) =>
+        swal.fire({
+          icon: "success",
+          html: "The item has been added to the cart successfully",
+          showCloseButton: true,
+        })
+      )
+      .catch((res) => {
+        swal.fire({
+          icon: "error",
+          html: "Please login before adding to the cart",
+          showCloseButton: true,
+        });
+      });
   };
 
   return (
