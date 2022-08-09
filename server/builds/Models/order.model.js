@@ -18,7 +18,7 @@ const crypto_1 = __importDefault(require("crypto"));
 class Order {
 }
 __decorate([
-    (0, typegoose_1.prop)({ required: true, unique: true, default: crypto_1.default.randomBytes(12).toString('hex') }),
+    (0, typegoose_1.prop)({ required: true, default: crypto_1.default.randomBytes(12).toString('hex') }),
     __metadata("design:type", String)
 ], Order.prototype, "orderId", void 0);
 __decorate([

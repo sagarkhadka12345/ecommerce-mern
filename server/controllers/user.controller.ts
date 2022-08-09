@@ -1,125 +1,120 @@
-import express, { NextFunction, Request, Response } from "express"
+import express, { NextFunction, Request, Response } from "express";
 import { LoginType, UserModel } from "../Models/user.model";
 import mongoose from "mongoose";
 import { RegisterUserBody, registerUserSchema } from "../Models/user.model";
-import dotenv from "dotenv"
-import  * as bcrypt from "bcrypt"
-import { changePasswordService, findUserService, resetPasswordService } from "../service/user.service";
+import dotenv from "dotenv";
+import * as bcrypt from "bcrypt";
+import {
+  changePasswordService,
+  findUserService,
+  resetPasswordService,
+} from "../service/user.service";
 import crypto from "crypto";
-import {sendMail} from "../helpers/mailer"
-import jwt from "jsonwebtoken"
+import { sendMail } from "../helpers/mailer";
+import jwt from "jsonwebtoken";
 import config from "../config/config";
-
 
 dotenv.config();
 
+export const createUserHandler = async (
+  req: Request<{}, {}, RegisterUserBody>,
+  res: Response
+) => {
+  const { firstname, lastname, email, password, username, address } = req.body;
 
-
-
-export const createUserHandler = async (req: Request<{},{}, RegisterUserBody>, res: Response) => {
-    const {firstname, lastname, email, password, username, address } = req.body
-    
-    const user = await UserModel.create({
-        _id: new mongoose.Types.ObjectId(),
-        email,
-        password,
-        username,
-        address,
-        firstname,
-        lastname,
-
-
+  const user = await UserModel.create({
+    _id: new mongoose.Types.ObjectId(),
+    email,
+    password,
+    username,
+    address,
+    firstname,
+    lastname,
+  });
+  return user
+    .save()
+    .then(() => {
+      const token = jwt.sign({ username: username }, config.access.secret);
+      res.send(token);
     })
-    return user.save()
-        .then(() => {
-            const token =jwt.sign({username:username},config.access.secret)
-            res.send(token)
-        })
-        .catch((err: any) => {
-            if (err.code === 1000) {
-                return res.send("User already cready")
-            }
-            return res.send(err.message).status(200)
-        })
-}
-export const loginUser =async (req:Request<{}, {}, LoginType>, res:Response) => {
-    const {username, password} = req.body 
-   const user = await findUserService(username)
-   if (user &&  await user.comparePassword(password)) {
-    
+    .catch((err: any) => {
+      if (err.code === 1000) {
+        return res.send("User already created");
+      }
+      return res.send(err.message).status(200);
+    });
+};
+export const loginUser = async (
+  req: Request<{}, {}, LoginType>,
+  res: Response
+) => {
+  const { username, password } = req.body;
+  const user = await findUserService(username);
+  if (user && (await user.comparePassword(password))) {
+    const token = jwt.sign({ username: username }, config.access.secret);
 
-    const token =jwt.sign({username:username},config.access.secret)
-    
-    return res.status(200).send(token)
+    return res.status(200).send(token);
   }
 
-   return res
-   .status(500)
-   .send("Invalid email or password");
-}
+  return res.status(500).send("Invalid email or password");
+};
 
-export const findAllUsers = async (req:Request, res:Response) =>{
- 
-    const item = await UserModel.find()
-    return res.status(200).send(item)
-  
-  
+export const findAllUsers = async (req: Request, res: Response) => {
+  const item = await UserModel.find();
+  return res.status(200).send(item);
+};
+
+export const changePassword = async (req: Request, res: Response) => {
+  const { username, password, newPassword } = req.body;
+  const user = await findUserService(username);
+  if (user && (await user.comparePassword(password))) {
+    await changePasswordService(username, password, newPassword);
+    return res.status(200).send(user);
   }
+  return res.status(500).send("Invalid email or password");
+};
+export const forgotPassword = async (req: Request, res: Response) => {
+  const { username } = req.body;
+  const user = await UserModel.findOne({ username });
+  if (!user) {
+    return res.send("User doesn't exist");
+  }
+  const token = crypto.randomBytes(12).toString("hex");
 
-export const changePassword = async (req:Request, res:Response)=>{
-    const {username, password, newPassword }= req.body
-    const user = await findUserService(username)
-    if(user && await user.comparePassword(password)){
-        await changePasswordService(username, password, newPassword) 
-        return res.status(200).send(user)
+  const update = await UserModel.updateOne(
+    {
+      username,
+    },
+    {
+      $set: {
+        resetPassword: token,
+      },
     }
-    return res
-    .status(500)
-    .send("Invalid email or password");
+  );
+  await sendMail({
+    from: "sagar.khadka2001@mail.com",
+    to: "sagar.khadka2001@gmail.com",
+    subject: "Forgot Password",
+    html: `<a href='${token}'<button>Reset Password</button>`,
+  });
+  return res.status(200).send(token);
+};
+export const resetPassword = async (req: Request, res: Response) => {
+  const { username, password, token } = req.body;
+  const user = await findUserService(username);
+  const newToken = crypto.randomBytes(12).toString("hex");
+  const hash = await bcrypt.hash(password, 10);
+  if (user && user.compareToken(token)) {
+    await resetPasswordService(username, newToken, hash);
+    return res.status(200).redirect("http://localhost:3001");
+  }
+  return res.status(404).send("user not found");
+};
 
-
-}
-export const forgotPassword = async (req:Request, res:Response)=>{
-
-    const {username}= req.body;
-    const user = await UserModel.findOne({username})
-    if(!user){
-        return res.send("User doesn't exist")
-    }
-    const token =  crypto.randomBytes(12).toString('hex')
-    
-    const update = await UserModel.updateOne({
-        username
-    },{
-        $set:{
-            resetPassword:token
-        }
-    })
-  // await sendMail({from: "sagarkhadka@mail.com", to: "sagarkhadka@mail.com", subject: "Forgot Password", html: `<a href='${token}'<button>Reset Password</button>` })
-    return res.status(404).send(token)
-    
-
-}
-export const resetPassword = async (req:Request, res:Response)=>{
-    const {username, password, token}= req.body;
-    const user = await findUserService(username);
-    const newToken =  crypto.randomBytes(12).toString('hex')
-    const hash =await bcrypt.hash(password, 10)
-    if(user &&  user.compareToken(token)){
-      await resetPasswordService(username, newToken, hash);
-      return res.status(200).redirect("http://localhost:3001")
-    }
-    return res.status(404).send("user not found")
-}
-
-
-export const findUser = async(req:Request, res:Response)=>{
-   const {username}=req.body.username;
-    const user = await findUserService(username)
-    return res.status(200).send(req.body)
-
-}
-
-
-
-
+export const findUser = async (req: Request, res: Response) => {
+  const { username } = req.body.username;
+  const result = await findUserService(username)
+    .then((data) => res.send(req.body).status(200))
+    .catch((err) => res.send(err));
+  return res.status(200).send(req.body);
+};

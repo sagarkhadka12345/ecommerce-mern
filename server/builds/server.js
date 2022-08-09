@@ -16,6 +16,7 @@ const item_controller_2 = require("./controllers/item.controller");
 const item_controller_3 = require("./controllers/item.controller");
 const item_controller_4 = require("./controllers/item.controller");
 const order_controller_1 = require("./controllers/order.controller");
+const cors_1 = __importDefault(require("cors"));
 const authentication_1 = require("./middlewares/authentication");
 const user_model_1 = require("./Models/user.model");
 const zod_express_middleware_1 = require("zod-express-middleware");
@@ -28,13 +29,11 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use(express_1.default.json());
-// app.use(cors({
-//   origin:"*"
-// }))
-app.use(express_1.default.static("build"));
-app.get("/static", (req, res) => {
-  res.sendFile(path_1.default.resolve(path.join(__dirname, "build")));
-});
+app.use(
+  (0, cors_1.default)({
+    origin: "*",
+  })
+);
 app.listen(config_1.default.server.port, () => {
   logger_1.default.info(`Listening to port ${config_1.default.server.port} `);
 });
@@ -54,33 +53,33 @@ app.get("/ping", (req, res) => {
   res.send("OK").status(200);
   logger_1.default.info("api is Healthy");
 });
-app.post("/cart/createCart", cart_controller_1.createCartHandler);
+app.post("/api/cart/createCart", cart_controller_1.createCartHandler);
 app.post(
-  "/cart/emptyCart",
+  "/api/cart/emptyCart",
   authentication_1.authenticateToken,
   cart_controller_1.emptyCartHandler
 );
 app.get(
-  "/cart/findCart",
+  "/api/cart/findCart",
   authentication_1.authenticateToken,
   cart_controller_1.findCart
 );
 app.post(
-  "/cart/update",
+  "/api/cart/update",
   authentication_1.authenticateToken,
   cart_controller_1.updateCartHandler
 );
 app.post(
-  "/cart/remove",
+  "/api/cart/remove",
   authentication_1.authenticateToken,
   cart_controller_1.removeItemHandler
 );
-app.get("/item/findAll", item_controller_1.findAllItems);
-app.get("/item/find/:itemId", item_controller_2.findItem);
-app.get("/item/type/:typeId", item_controller_4.findItemsByType);
-app.get("/item/seller/:seller", item_controller_3.findItemsBySeller);
+app.get("/api/item/findAll", item_controller_1.findAllItems);
+app.get("/api/item/find/:itemId", item_controller_2.findItem);
+app.get("/api/item/type/:typeId", item_controller_4.findItemsByType);
+app.get("/api/item/seller/:seller", item_controller_3.findItemsBySeller);
 app.post(
-  "/item/createItem",
+  "/api/item/createItem",
   authentication_1.authenticateTokenSeller,
   (0, zod_express_middleware_1.processRequestBody)(
     item_model_1.newItemSchema.body
@@ -88,48 +87,52 @@ app.post(
   item_controller_1.createItemHandler
 );
 app.post(
-  "/order/createOrder",
+  "/api/order/createOrder",
   authentication_1.authenticateToken,
   order_controller_1.createOrderHandler
 );
-app.get("/order/find/:username", order_controller_1.findOrderByUsername);
+app.get("/api/order/find/:username", order_controller_1.findOrderByUsername);
 app.post(
-  "/user/createUser",
+  "/api/user/createUser",
   (0, zod_express_middleware_1.processRequestBody)(
     user_model_1.registerUserSchema.body
   ),
   user_controller_1.createUserHandler
 );
-app.get("/user/findAllUsers", user_controller_1.findAllUsers);
+app.get("/api/user/findAllUsers", user_controller_1.findAllUsers);
 app.get(
-  "/user/findUser",
+  "/api/user/findUser",
   authentication_1.authenticateToken,
   user_controller_1.findUser
 );
 app.post(
-  "/user/login",
+  "/api/user/login",
   (0, zod_express_middleware_1.processRequestBody)(
     user_model_1.loginBodySchema.body
   ),
   user_controller_1.loginUser
 );
 app.post(
-  "/user/changePassword=",
+  "/api/user/changePassword=",
   authentication_1.authenticateToken,
   user_controller_1.changePassword
 );
-app.post("/user/forgotPassword", user_controller_1.forgotPassword);
-app.post("/user/resetPassword", user_controller_1.resetPassword);
+app.post("/api/user/forgotPassword", user_controller_1.forgotPassword);
+app.post("/api/user/resetPassword", user_controller_1.resetPassword);
 app.post(
-  "/order/pushItems",
+  "/api/order/pushItems",
   authentication_1.authenticateToken,
   order_controller_1.pushItems
 );
 app.post(
-  "/order/createOrder",
+  "/api/order/createOrder",
   authentication_1.authenticateToken,
   order_controller_1.createOrderHandler
 );
+app.use(express_1.default.static("build"));
+app.use("*", (req, res) => {
+  res.sendFile(path_1.default.resolve(__dirname, "../build", "index.html"));
+});
 app.use("*", (req, res) => {
   return res.send("The Page isn't available in the website");
 });

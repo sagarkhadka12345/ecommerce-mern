@@ -1,17 +1,42 @@
-import React from 'react'
-import { userEndPoint } from '../Apis'
-const forgotPassword = `${userEndPoint}/forgotPassword`
+import React from "react";
+import { userEndPoint } from "../Apis";
+import swal from "sweetalert2";
+import { Link } from "react-router-dom";
+const forgotPassword = `${userEndPoint}/forgotPassword`;
+
+const forget = () => {
+  return swal.fire({
+    html: "Your Reset Password Token has beed sent to your registered mailing address",
+  });
+};
 
 const ForgotPassword = () => {
-    return (
-        <div className='flex w-[100vw] h-[100vh] justify-center items-center '>
-            <form className='flex flex-col border p-6 items-center' action={forgotPassword} method="POST">
-            <div className='font-bold text-indigo-400 md-2'>Forgot Password</div>
-            <input className='border rounded-sm py-2 px-4 mt-2' type="text" placeholder="Please enter the username" name='username'/>
-            <button className='w-max p-2 mt-4 mx-2 border-blue bg-indigo-400 hover:bg-indigo-500 hover:text-white' type='submit'>Reset Password</button>
-            </form>
-        </div>
-    )
-}
+  return (
+    <div className="flex w-[100vw] pt-[6rem] sm:pt-0 sm:h-[80vh]  justify-center items-center ">
+      <form
+        className="flex flex-col border p-16 items-center justify-between"
+        action={forgotPassword}
+        method="POST"
+      >
+        <div className="font-bold text-indigo-400 md-4">Forgot Password</div>
+        <input
+          className="border rounded-sm py-2 px-4 mt-4"
+          type="text"
+          placeholder="Please enter the username"
+          name="username"
+        />
+        <button
+          className="w-max p-2 mt-6 mx-2 border-blue bg-indigo-400 hover:bg-indigo-500 hover:text-white"
+          type="submit"
+        >
+          Send Reset Password
+        </button>
+        <button className="w-max p-2 mt-6 mx-2 border-blue bg-indigo-400 hover:bg-indigo-500 hover:text-white">
+          <Link to={"/resetPassword"}>Use Reset Token</Link>
+        </button>
+      </form>
+    </div>
+  );
+};
 
-export default ForgotPassword
+export default ForgotPassword;

@@ -97,41 +97,6 @@ const CartComponent: React.FC = (): JSX.Element => {
     window.location.reload();
   }
 
-  // useEffect(() => {
-  //   if (isInitialMount.current) {
-  //     isInitialMount.current = false;
-  //   } else {
-  //     const work = async () => {
-  //       await axios
-  //         .post(
-  //           createOrderEndPoint,
-  //           {
-  //             items: orderItem,
-  //             totalPrice: totalPriceState,
-  //           },
-  //           {
-  //             headers: {
-  //               Authorization: "Bearer " + localStorage.getItem("token"),
-  //             },
-  //           }
-  //         )
-  //         .catch((err) => console.log(err));
-
-  //       await axios.post(
-  //         emptyCartEndPoint,
-  //         { username: "" },
-  //         {
-  //           headers: {
-  //             Authorization: "Bearer " + localStorage.getItem("token"),
-  //           },
-  //         }
-  //       );
-  //       window.location.reload();
-  //     };
-  //     work();
-  //   }
-  // }, [totalQtyState, totalPriceState, carts]);
-
   const checkOutHandler = async () => {
     swal
       .fire({
@@ -151,24 +116,27 @@ const CartComponent: React.FC = (): JSX.Element => {
 
   if (cart.length > 0) {
     return (
-      <div className="border p-2 bg-gray-100 h-[100vh] pb-12 ">
+      <div className="border p-2 bg-gray-100 sm:h-[100vh] sm:pb-12 ">
         Cart:
         {cart.map((data: Cart, index) => (
-          <div key={index} className="pb-16">
+          <div key={index} className="pb-16 mb-12 ">
             <div
               key={index}
               className="item my-2 py-2 px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  m-2 shadow-sm"
             >
               {data.items.map((data: CartItem, index) => (
-                <div key={index} className="border border-2  bg-white">
-                  <div className="m-2 relative flex flex-col">
+                <div
+                  key={index}
+                  className="border-2 relative  bg-white m-4 p-4"
+                >
+                  <div className="m-2  flex flex-col">
                     <img
                       className="itemImage my-2"
                       src={image}
                       alt="image not Found"
                     ></img>
                     <div
-                      className="absolute sm:right-1 md:right-0 top-1 hover:cursor-pointer text-xl"
+                      className="absolute right-2  top-3 hover:cursor-pointer text-2xl"
                       onClick={() => {
                         setProductId(data.productId);
                         remove();
@@ -210,6 +178,7 @@ const CartComponent: React.FC = (): JSX.Element => {
                 onClick={() => {
                   checkOutHandler();
                 }}
+                className="border-2 bg-green-200 p-4 border-indigo-600"
               >
                 Check out
               </button>

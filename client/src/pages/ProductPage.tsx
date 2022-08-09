@@ -35,7 +35,7 @@ const ProductPage: React.FC = (): JSX.Element => {
 
   if (product) {
     return (
-      <div className="relative bg-gray-100 pb-12">
+      <div className="relative bg-gray-100 pb-12 ">
         <div className="w-max m-auto py-4 shodow-md">
           <div className="rounded-md border-2">
             <input
@@ -47,15 +47,15 @@ const ProductPage: React.FC = (): JSX.Element => {
           </div>
         </div>
 
-        <ul className="flex justify-between w-full px-4  border-y-2">
+        <ul className="flex justify-between w-full px-4  border-y-2 overflow-x-scroll">
           {keywords.map((val, i) => (
             <div
               key={i}
               onClick={handleClick}
               className={
                 categories === val
-                  ? "cursor-pointer p-2 m-1 px-4 rounded-md bg-indigo-400 shadow-md"
-                  : "cursor-pointer p-2 m-1 px-4 rounded-md bg-gray-200"
+                  ? "cursor-pointer p-2 m-1 mb-4 px-4 rounded-md bg-indigo-400 shadow-md "
+                  : "cursor-pointer p-2 m-1 mb-4 px-4 rounded-md bg-gray-200"
               }
             >
               {val}
@@ -63,7 +63,7 @@ const ProductPage: React.FC = (): JSX.Element => {
           ))}
         </ul>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-2 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-2 px-4  ">
           {product.map((data: Item, index) =>
             categories === "All" && search === "" ? (
               <ProductCard

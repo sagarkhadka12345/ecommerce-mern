@@ -57,8 +57,8 @@ const ProductCard = (props: Item) => {
   };
 
   return (
-    <div>
-      <div className="cart flex flex-col p-3 m-2  bg-white rounded-md hover:bg-gray-300  shadow-md">
+    <div className="mb-4">
+      <div className="cart flex flex-col p-6 sm:p-4 m-2  bg-white rounded-md hover:bg-gray-300  shadow-md">
         <img className="img" src={image}></img>
         <div className="flex justify-between px-2 py-1">
           <div className="img-container p-2 my-2">{props.name}</div>
@@ -72,7 +72,7 @@ const ProductCard = (props: Item) => {
           <div className="quantity px-2  tex-indigo-500 ">
             Quantiy: {quantity}{" "}
             <button
-              className="text-2xl absolute left-[6.5rem] top-[.7rem] border-2 border-gray-200 px-1"
+              className="text-2xl absolute left-[6.5rem] top-[.7rem] border-2 border-gray-200 px-2"
               onClick={handleClick}
             >
               +

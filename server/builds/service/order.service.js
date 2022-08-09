@@ -8,23 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findOrderServiceByUsername = exports.pushItemsService = exports.orderService = void 0;
+exports.findOrderServiceByUsername = exports.pushItemsService = void 0;
 const order_model_1 = require("../Models/order.model");
-const mongoose_1 = __importDefault(require("mongoose"));
-function orderService(username, items, totalPrice) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const order = yield order_model_1.OrderModel.create({
-            _id: new mongoose_1.default.Types.ObjectId(),
-            username, items, totalPrice
-        });
-        return order.save();
-    });
-}
-exports.orderService = orderService;
 function pushItemsService(username, item) {
     return __awaiter(this, void 0, void 0, function* () {
         const order = yield order_model_1.OrderModel.findOneAndUpdate({

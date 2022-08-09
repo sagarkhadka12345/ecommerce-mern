@@ -25,7 +25,7 @@ const createOrderHandler = (req, res) => __awaiter(void 0, void 0, void 0, funct
         totalPrice
     });
     return Cart.save().then((Cart) => {
-        res.status(200);
+        res.status(200).send(Cart);
     })
         .catch((err) => {
         res.status(500).send(err);

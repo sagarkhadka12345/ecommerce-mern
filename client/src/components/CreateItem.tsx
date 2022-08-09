@@ -60,7 +60,7 @@ const CreateItem = () => {
   };
 
   return (
-    <div className="flex w-full h-[80.5vh] justify-center items-center ">
+    <div className="flex  h-[80.5vh] justify-center items-center mx-8 ">
       <form
         onSubmit={createItem}
         method="POST"

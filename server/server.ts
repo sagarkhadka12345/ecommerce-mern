@@ -16,26 +16,22 @@ import { loginBodySchema, registerUserSchema } from './Models/user.model';
 import {processRequestBody} from "zod-express-middleware";
 import { newItemSchema } from './Models/item.model';
 import path from "path"
-
+import bodyParser from 'body-parser';
 
 
 db;
 const app = express()
-const bodyParser = require('body-parser')
+
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
-app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(cors({
   origin:"*"
 }))
 
 
-  app.use(express.static("build"));
-  app.get("/", (req:Request, res:Response)=>{
-    res.sendFile(path.resolve(__dirname, "build", "index.html"))
-  })
+  
 
 
 
@@ -64,29 +60,32 @@ app.get("/ping", (req: Request, res: Response) => {
 })
 
 
-app.post("/cart/createCart", createCartHandler)
-app.post("/cart/emptyCart",authenticateToken, emptyCartHandler)
-app.get("/cart/findCart",authenticateToken,findCart)
-app.post("/cart/update",authenticateToken, updateCartHandler)
-app.post("/cart/remove",authenticateToken, removeItemHandler)
-app.get("/item/findAll", findAllItems)
-app.get("/item/find/:itemId", findItem )
-app.get("/item/type/:typeId", findItemsByType)
-app.get("/item/seller/:seller", findItemsBySeller)
-app.post("/item/createItem",authenticateTokenSeller, processRequestBody(newItemSchema.body), createItemHandler)
-app.post("/order/createOrder",authenticateToken, createOrderHandler);
-app.get("/order/find/:username", findOrderByUsername);
-app.post("/user/createUser",processRequestBody(registerUserSchema.body), createUserHandler)
-app.get("/user/findAllUsers", findAllUsers)
-app.get("/user/findUser",authenticateToken, findUser)
-app.post("/user/login",processRequestBody(loginBodySchema.body), loginUser)
-app.post("/user/changePassword=", authenticateToken, changePassword)
-app.post("/user/forgotPassword", forgotPassword)
-app.post("/user/resetPassword", resetPassword)
-app.post("/order/pushItems",authenticateToken, pushItems)
-app.post("/order/createOrder", authenticateToken, createOrderHandler)
+app.post("/api/cart/createCart", createCartHandler)
+app.post("/api/cart/emptyCart",authenticateToken, emptyCartHandler)
+app.get("/api/cart/findCart",authenticateToken,findCart)
+app.post("/api/cart/update",authenticateToken, updateCartHandler)
+app.post("/api/cart/remove",authenticateToken, removeItemHandler)
+app.get("/api/item/findAll", findAllItems)
+app.get("/api/item/find/:itemId", findItem )
+app.get("/api/item/type/:typeId", findItemsByType)
+app.get("/api/item/seller/:seller", findItemsBySeller)
+app.post("/api/item/createItem",authenticateTokenSeller, processRequestBody(newItemSchema.body), createItemHandler)
+app.post("/api/order/createOrder",authenticateToken, createOrderHandler);
+app.get("/api/order/find/:username", findOrderByUsername);
+app.post("/api/user/createUser",processRequestBody(registerUserSchema.body), createUserHandler)
+app.get("/api/user/findAllUsers", findAllUsers)
+app.get("/api/user/findUser",authenticateToken, findUser)
+app.post("/api/user/login",processRequestBody(loginBodySchema.body), loginUser)
+app.post("/api/user/changePassword=", authenticateToken, changePassword)
+app.post("/api/user/forgotPassword", forgotPassword)
+app.post("/api/user/resetPassword", resetPassword)
+app.post("/api/order/pushItems",authenticateToken, pushItems)
+app.post("/api/order/createOrder", authenticateToken, createOrderHandler)
 
-
+app.use(express.static("build"));
+  app.use("*", (req:Request, res:Response)=>{
+    res.sendFile(path.resolve(__dirname, "build","index.html"))
+  })
 
 
 app.use("*", (req:Request, res:Response)=>{
