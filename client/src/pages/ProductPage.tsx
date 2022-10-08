@@ -25,6 +25,7 @@ const ProductPage: React.FC = (): JSX.Element => {
   useEffect(() => {
     axios.get(api).then((res) => {
       setProduct(res.data);
+      console.log(res.data);
     });
   }, [categories]);
   //  console.log(categories)

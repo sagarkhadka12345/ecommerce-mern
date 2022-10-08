@@ -13,10 +13,10 @@ const api = `${userEndPoint}/findUser`;
 
 const CreateItem = () => {
   const [name, setName] = useState<string>();
-  const [price, setPrice] = useState<number>();
+  const [price, setPrice] = useState<string>();
   const [type, setType] = useState<string>();
   const [seller, setSeller] = useState<User>();
-  const [img, setImg] = useState<string>();
+  const [img, setImg] = useState<File | null>();
 
   useEffect(() => {
     axios
@@ -31,32 +31,48 @@ const CreateItem = () => {
   }, [api]);
   const createItem = async (e: any) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append("name", name as string);
+    formData.append("price", price as string);
+    formData.append("type", type as string);
+    formData.append("itemImage", img as File);
 
     await axios
-      .post(
-        createItemEndPoint,
-        {
-          name,
-          price,
-          type,
-          img,
+      .post(createItemEndPoint, formData, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res.data);
       })
-      .catch((err: AxiosError) =>
+      .then((res) => {
         swal.fire({
-          html: (err.response?.data as Array<any>)[0]?.errors.issues[0].message,
+          html: "Item Posted Successfully",
           showCloseButton: true,
           showConfirmButton: true,
-        })
-      );
+        });
+      })
+      .catch((err: AxiosError) => {
+        if (err.status === "406") {
+          swal.fire({
+            html: err.response?.data as string,
+            showCloseButton: true,
+            showConfirmButton: true,
+          });
+        } else {
+          if ((err.response?.data as Array<any>)[0]?.errors == undefined) {
+            return swal.fire({
+              html: err.response?.data as string,
+              showCloseButton: true,
+              showConfirmButton: true,
+            });
+          }
+          swal.fire({
+            html: (err.response?.data as Array<any>)[0]?.errors.issues[0]
+              .message,
+            showCloseButton: true,
+            showConfirmButton: true,
+          });
+        }
+      });
   };
 
   return (
@@ -80,7 +96,7 @@ const CreateItem = () => {
           type="number"
           name="price"
           onChange={(e) => {
-            setPrice(parseInt(e.target.value));
+            setPrice(e.target.value);
           }}
           className="border  py-1 text-indigo-400 my-1"
         />
@@ -93,13 +109,13 @@ const CreateItem = () => {
           }}
           className="border  py-1 text-indigo-400 my-1"
         />
-        <label htmlFor="img">Image:</label>
+        <label htmlFor="itemImage">Image:</label>
         <input
-          type="text"
-          name="img"
+          type="file"
+          name="itemImage"
           className="border  py-1 text-indigo-400 "
           onChange={(e) => {
-            setImg(e.target.value);
+            setImg(e.target.files && e.target.files[0]);
           }}
         />
         <div className="flex justify-center">

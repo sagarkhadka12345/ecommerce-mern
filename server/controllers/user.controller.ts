@@ -35,7 +35,7 @@ export const createUserHandler = async (
     .save()
     .then(() => {
       const token = jwt.sign({ username: username }, config.access.secret);
-      res.send(token);
+      return res.status(200).send(token);
     })
     .catch((err: any) => {
       if (err.code === 1000) {
@@ -113,8 +113,10 @@ export const resetPassword = async (req: Request, res: Response) => {
 
 export const findUser = async (req: Request, res: Response) => {
   const { username } = req.body.username;
-  const result = await findUserService(username)
-    .then((data) => res.send(req.body).status(200))
-    .catch((err) => res.send(err));
-  return res.status(200).send(req.body);
+  try {
+    const result = await findUserService(username);
+    res.send(req.body).status(200);
+  } catch (error) {
+    res.status(400).send(error);
+  }
 };

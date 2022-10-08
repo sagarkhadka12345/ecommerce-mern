@@ -59,7 +59,12 @@ const ProductCard = (props: Item) => {
   return (
     <div className="mb-4">
       <div className="cart flex flex-col p-6 sm:p-4 m-2  bg-white rounded-md hover:bg-gray-300  shadow-md">
-        <img className="img" src={image}></img>
+        <img
+          className="img"
+          src={
+            props.img.includes(".") ? `/api/v1/image/item/${props.img}` : image
+          }
+        ></img>
         <div className="flex justify-between px-2 py-1">
           <div className="img-container p-2 my-2">{props.name}</div>
           <div className="price p-2 my-2 text-amber-600"> ${props.price}</div>
