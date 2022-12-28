@@ -38,7 +38,9 @@ export const createUserHandler = async (
       return res.status(200).send(token);
     })
     .catch((err: any) => {
-      if (err.code === 1000) {
+      console.log(err);
+      
+      if (err.code === 11000) {
         return res.send("User already created");
       }
       return res.send(err.message).status(200);

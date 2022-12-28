@@ -40,6 +40,11 @@ export const createCartHandler = async (req:Request, res:Response)=>{
       
   return Cart.save()
   .catch((err:any) => {
+    if(err.status =11000){
+      return res.send("user already").status(400)
+    }
+    console.log(err);
+    
     res.status(500).send(err);
   });
  }

@@ -5,7 +5,7 @@ const Footer = () => {
     <>
       <div className="flex w-full h-12 bg-indigo-500 text-white justify-center text-center pt-3 fixed bottom-0 mt-16">
         {" "}
-        Copyright: &copy; 2022 SagarKhadka
+        Copyright: &copy; Prajwol Lama
       </div>
     </>
   );

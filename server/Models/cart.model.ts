@@ -6,8 +6,8 @@ import { User } from "./user.model"
 export class Cart {
 
 
-    @prop({required:true, unique:true})
-    username: User["username"]
+    @prop({required:true})
+    username: string
     @prop({})
     items:[Ref<Item>]
     @prop({required:true, default:Date.now})

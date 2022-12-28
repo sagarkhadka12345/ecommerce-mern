@@ -10,6 +10,7 @@ import { Route, Routes, BrowserRouter } from "react-router-dom";
 import CreateItem from "./components/CreateItem";
 import Footer from "./components/Footer";
 import RegistrationForm from "./components/RegistrationForm";
+import MainLandingPage from "./components/MainLandingPage";
 
 function App() {
   return (
@@ -21,17 +22,19 @@ function App() {
             path="/"
             element={
               <>
-                <ProductPage />{" "}
+              <MainLandingPage/>{" "}
+                {/* <ProductPage />{" "} */}
               </>
             }
           />
-
+          <Route path="/catalogue" element={<ProductPage />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegistrationForm />} />
           <Route path="/resetPassword" element={<ResetPassword />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/carts" element={<Cart />} />
           <Route path="/item" element={<CreateItem />} />
+        
         </Routes>
         <Footer />
       </BrowserRouter>
