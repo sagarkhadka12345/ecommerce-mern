@@ -11,30 +11,38 @@ const LoginForm = () => {
 
   async function loginUser(event: any) {
     event.preventDefault();
-if(username && password){
-    await axios
-      .post(loginEnpoint, {
-        username,
-        password,
-      })
-      .then((res) => {
-        localStorage.setItem("token", res.data);
-        window.location.href = "/";
-      })
-      .catch((err: AxiosError) => {
-        console.log(err);
-        
-        swal.fire({
-          html: (err.response?.data as Array<any>)[0]?.errors.issues[0].message,
-          showCloseButton: true,
-          showConfirmButton: true,
+    if (username && password) {
+      await axios
+        .post(loginEnpoint, {
+          username,
+          password,
+        })
+        .then((res) => {
+          localStorage.setItem("token", res.data);
+          window.location.href = "/";
+        })
+        .catch((err: AxiosError) => {
+          console.log("====================================");
+          console.log(err);
+          console.log("====================================");
+          if (err.response && err.response.status == 500) {
+            return swal.fire(
+              (err.response && err.response.data
+                ? err.response.data
+                : "") as string
+            );
+          } else {
+            swal.fire({
+              html: (err.response?.data as Array<any>)[0]?.errors.issues[0]
+                .message,
+              showCloseButton: true,
+              showConfirmButton: true,
+            });
+          }
         });
-      });}
-      else{
-        swal.fire(
-          "please fill the credentials"
-        );
-      }
+    } else {
+      swal.fire("please fill the credentials");
+    }
   }
   return (
     <div className="w-[100vw] h-screen-50 flex justify-center items-center">
@@ -75,7 +83,12 @@ if(username && password){
         >
           Login
         </button>
-        <label htmlFor="" className="flex justify-center mt-4 text-black">Not Registered Yet? <Link to="/register" className="ml-1 text-indigo-800">Register</Link></label>
+        <label htmlFor="" className="flex justify-center mt-4 text-black">
+          Not Registered Yet?{" "}
+          <Link to="/register" className="ml-1 text-indigo-800">
+            Register
+          </Link>
+        </label>
       </form>
     </div>
   );

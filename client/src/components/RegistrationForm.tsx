@@ -31,47 +31,46 @@ const RegistrationForm: React.FC = (): JSX.Element => {
   const handleRegister = (e: any) => {
     e.preventDefault();
     try {
-      
-   
-    axios
-      .post(registrationEndPoint, {
-        firstname,
-        username,
-        lastname,
-        email,
-        password,
-        address,
-        confirmPassword,
-      })
-      .then((res) => {
-        localStorage.setItem("token", res.data);
-        window.location.href = "/";
-      })
-      .catch((err: AxiosError) => {
-        swal.fire({
-          html: (err.response?.data as Array<any>)[0]?.errors.issues[0].message,
-          showCloseButton: true,
-          showConfirmButton: true,
+      axios
+        .post(registrationEndPoint, {
+          firstname,
+          username,
+          lastname,
+          email,
+          password,
+          address,
+          confirmPassword,
+        })
+        .then((res) => {
+          console.log(res.data);
+
+          localStorage.setItem("token", res.data);
+          window.location.href = "/";
+        })
+        .catch((err: AxiosError) => {
+          swal.fire({
+            html: (err.response?.data as Array<any>)[0]?.errors.issues[0]
+              .message,
+            showCloseButton: true,
+            showConfirmButton: true,
+          });
         });
-      });
-      axios.post(createcartEndPoint, {
-        username,
-      }).catch((err)=>console.log(err)
-      );
-      window.location.href="/"
+      axios
+        .post(createcartEndPoint, {
+          username,
+        })
+        .catch((err) => console.log(err));
     } catch (error) {
       console.log(error);
-      
     }
   };
   return (
     <div className="w-screen  flex justify-center pt-2 pb-2 mb-2 text-left">
-      <form
-        onSubmit={handleRegister}
-        method="POST"
-        className="  p-8  border-2"
-      >
-      <label className="flex justify-center items-center mb-10 text-xl underline decoration-1 text-decoration-style:solid"> Register</label>
+      <form onSubmit={handleRegister} method="POST" className="  p-8  border-2">
+        <label className="flex justify-center items-center mb-10 text-xl underline decoration-1 text-decoration-style:solid">
+          {" "}
+          Register
+        </label>
         <div className="grid grid-cols-1 sm:grid-cols-2">
           <div className="flex-row sm:flex-col">
             <label htmlFor="firstname">Firstname</label>
@@ -137,10 +136,10 @@ const RegistrationForm: React.FC = (): JSX.Element => {
               required
             />
             <input
-                className="password-checkbox h-4 w-4 m-1 cursor-pointer"
-                onChange={handlePasswordChange}
-                type="checkbox"
-              ></input>
+              className="password-checkbox h-4 w-4 m-1 cursor-pointer"
+              onChange={handlePasswordChange}
+              type="checkbox"
+            ></input>
           </div>
           <div className="flex-row sm:flex-col">
             <label htmlFor="password">Confirm password</label>
@@ -152,26 +151,20 @@ const RegistrationForm: React.FC = (): JSX.Element => {
               required
             />
             <input
-                className="password-checkbox h-4 w-4 m-1 cursor-pointer"
-                onChange={handleConfirmPasswordChange}
-                type="checkbox"
-              ></input>
+              className="password-checkbox h-4 w-4 m-1 cursor-pointer"
+              onChange={handleConfirmPasswordChange}
+              type="checkbox"
+            ></input>
           </div>
-          
-          
-          
-        
         </div>
         <div className="flex-row sm:flex-col">
-
-        <div className="flex justify-center mt-8 text-xl">
-          <input
-            className="border rounded-full w-40 h-15 cursor-pointer mt-2 mb-4 p-2 bg-indigo-500 hover:bg-gray-400"
-            type="submit"
-            value="Submit"
-          />
-        </div>
-        
+          <div className="flex justify-center mt-8 text-xl">
+            <input
+              className="border rounded-full w-40 h-15 cursor-pointer mt-2 mb-4 p-2 bg-indigo-500 hover:bg-gray-400"
+              type="submit"
+              value="Submit"
+            />
+          </div>
         </div>
       </form>
     </div>

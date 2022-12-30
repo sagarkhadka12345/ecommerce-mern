@@ -13,6 +13,7 @@ import RegistrationForm from "./components/RegistrationForm";
 import MainLandingPage from "./components/MainLandingPage";
 
 function App() {
+  
   return (
     <>
       <BrowserRouter>

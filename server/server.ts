@@ -39,9 +39,28 @@ import { newItemSchema } from "./Models/item.model";
 import path from "path";
 import bodyParser from "body-parser";
 import multer from "multer";
-
+const Stripe = require("stripe");
+const stripe = Stripe(
+  "sk_test_51MA1w7G9ZwN3X5brgRNkQLV1F6sgvTMVrpoMYUvElldIGToP1115fat1mITTFqIn2PMc3LK3V3Z9D4vvwBICokM000S3vgT2YU"
+);
 db;
 const app = express();
+
+const pricesa = async () => {
+  try {
+    const product = await stripe.products.create({
+      name: "Basic Dashboard",
+      default_price_data: {
+        unit_amount: 1000,
+        currency: "usd",
+        recurring: { interval: "month" },
+      },
+      expand: ["default_price"],
+    });
+    console.log(product);
+  } catch (error) {}
+};
+pricesa();
 
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
@@ -73,6 +92,13 @@ app.get("/ping", (req: Request, res: Response) => {
   res.send("OK").status(200);
   logger.info("api is Healthy");
 });
+
+app.post("stripe", async (req: Request, res: Response) => {
+  try {
+    const session = await stripe.checkout.sessions.create({});
+  } catch (error) {}
+});
+
 app.use("/api/v1/image/item", express.static("./Assets/Item/"));
 
 app.post("/api/cart/createCart", createCartHandler);

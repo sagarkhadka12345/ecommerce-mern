@@ -13,6 +13,7 @@ import crypto from "crypto";
 import { sendMail } from "../helpers/mailer";
 import jwt from "jsonwebtoken";
 import config from "../config/config";
+import { object } from "zod";
 
 dotenv.config();
 
@@ -39,7 +40,7 @@ export const createUserHandler = async (
     })
     .catch((err: any) => {
       console.log(err);
-      
+
       if (err.code === 11000) {
         return res.send("User already created");
       }
@@ -51,8 +52,18 @@ export const loginUser = async (
   res: Response
 ) => {
   const { username, password } = req.body;
+  console.log("====================================");
+  console.log(req.body);
+  console.log("====================================");
   const user = await findUserService(username);
-  if (user && (await user.comparePassword(password))) {
+  console.log("====================================");
+  console.log(user);
+  console.log("====================================");
+  if (
+    user &&
+    Object.entries(user).length !== 0 &&
+    (await user.comparePassword(password))
+  ) {
     const token = jwt.sign({ username: username }, config.access.secret);
 
     return res.status(200).send(token);
