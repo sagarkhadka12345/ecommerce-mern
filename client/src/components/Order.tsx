@@ -4,6 +4,7 @@ import { orderEndPoint } from "../Apis";
 import swal from "sweetalert2";
 import { Order as TOrder, User } from "../types/types";
 import { userEndPoint } from "../Apis";
+import moment from "moment";
 const Order = () => {
   const [orders, setOrders] = useState([]);
   const api = `${userEndPoint}/findUser`;
@@ -29,11 +30,13 @@ const Order = () => {
       const resp = await axios.delete(`${orderEndPoint}/deleteOrder/${id}`, {
         headers: { Authorization: "Bearer " + localStorage.getItem("token") },
       });
-      swal.fire({
-        icon: "success",
-        title: "Success",
-        text: "Order delete success",
-      });
+      swal
+        .fire({
+          icon: "success",
+          title: "Success",
+          text: "Order delete success",
+        })
+        .then(() => window.location.reload());
     } catch (error) {
       swal.fire({
         icon: "error",
@@ -55,27 +58,38 @@ const Order = () => {
       })
       .catch((err) => console.log("Please login or create User"));
   }, [api]);
+
   return (
-    <div className="w-full h-max">
-      <table>
+    <div className="w-full h-max p-8">
+      <table className="w-full">
         <thead>
           <tr>
-            <td> Order ID</td>
-            <td>Order date</td>
-            <td>User</td>
-
-            <td></td>
+            <td className="px-4 py-2 bg-gray-400"> Order ID</td>
+            <td className="px-4 py-2 bg-gray-400">Order date</td>
+            <td className="px-4 py-2 bg-gray-400">User</td>
+            <td className="px-4 py-2 bg-gray-400">Total Price</td>
+            <td className="px-4 py-2 bg-gray-400"></td>
           </tr>
         </thead>
         <tbody>
           {orders.map((item: TOrder, index) => (
             <tr key={index}>
-              <td> {item.orderId}</td>
-              <td>{item.date}</td>
+              <td className="px-4 py-2 border-b-2 border-gray-400">
+                {" "}
+                {item.orderId}
+              </td>
+              <td className="px-4 py-2 border-b-2 border-gray-400">
+                {moment.unix(+item.date).format("YYYY-MM-DD")}
+              </td>
 
-              <td>{item.username}</td>
+              <td className="px-4 py-2 border-b-2 border-gray-400">
+                {item.username}
+              </td>
+              <td className="px-4 py-2 border-b-2 border-gray-400">
+                {item.totalPrice}
+              </td>
               {user?.username === "sagarkhadkammm" && (
-                <td>
+                <td className="px-4 py-2 border-b-2 border-gray-400">
                   <div
                     onClick={() => handleOrderDelete(item.orderId)}
                     className="cursor-pointer"
