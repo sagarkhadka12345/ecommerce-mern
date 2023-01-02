@@ -11,21 +11,7 @@ const MainLandingPage = () => {
     backgroundImage: "url('../images/main.png')",
   };
 
-  async function handleStripe() {
-    const stripe = await getStripe();
-    const { error } = await stripe.redirectToCheckout({
-      lineItems: [
-        {
-          quantity: 1,
-          price: "price_1MKkzrG9ZwN3X5brnJgJgwgT",
-        },
-      ],
-      mode: "subscription",
-      successUrl: `http://localhost:3000/success`,
-      cancelUrl: `http://localhost:3000/cancel`,
-      customerEmail: "customer@email.com",
-    });
-  }
+  
   return (
     <div>
       <div
@@ -34,7 +20,7 @@ const MainLandingPage = () => {
       >
         <h1 className="text-5xl md:text-6xl xl:text-7xl font-bold tracking-tight mb-12">
           The best offer on the market <br />
-          <span className="text-blue-600" onClick={handleStripe}>
+          <span className="text-blue-600" >
             for your needs
           </span>
         </h1>

@@ -4,11 +4,27 @@ import axios from "axios";
 import { Cart, CartItem } from "../types/types";
 import image from "../images/ab.jpeg";
 import swal from "sweetalert2";
+import getStripe from "../getStripe";
 
 interface received {
   0: {
     items: Array<CartItem>;
   };
+}
+async function handleStripe() {
+  const stripe = await getStripe();
+  const { error } = await stripe.redirectToCheckout({
+    lineItems: [
+      {
+        quantity: 1,
+        price: "price_1MKkzrG9ZwN3X5brnJgJgwgT",
+      },
+    ],
+    mode: "subscription",
+    successUrl: `http://localhost:3002/success`,
+    cancelUrl: `http://localhost:3002/cancel`,
+    customerEmail: "customer@email.com",
+  });
 }
 
 const CartComponent: React.FC = (): JSX.Element => {
@@ -82,8 +98,10 @@ const CartComponent: React.FC = (): JSX.Element => {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
         }
-      )
+      ) 
       .catch((err) => console.log(err));
+      
+      handleStripe(); 
 
     await axios.post(
       emptyCartEndPoint,
@@ -107,7 +125,7 @@ const CartComponent: React.FC = (): JSX.Element => {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          check();
+          handleStripe();
         } else if (result.isDenied) {
           return window.location.reload();
         }
@@ -178,7 +196,7 @@ const CartComponent: React.FC = (): JSX.Element => {
                 onClick={() => {
                   checkOutHandler();
                 }}
-                className="border-2 bg-green-200 p-4 border-indigo-600"
+                className="border-2 bg-green-200 p-4 border-indigo-600 bg-indigo-500"
               >
                 Check out
               </button>

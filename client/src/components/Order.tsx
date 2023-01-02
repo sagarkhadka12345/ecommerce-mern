@@ -13,7 +13,9 @@ const Order = () => {
       const res = await axios.get(`${orderEndPoint}/getAllOrders`, {
         headers: { Authorization: "Bearer " + localStorage.getItem("token") },
       });
-      setOrders(res.data);
+      setOrders(user?.username === "sagarkhadkammm"
+      ? res.data
+      : res.data.filter((item: TOrder) => item.username === user?.username));
     } catch (error) {
       swal.fire({
         icon: "error",

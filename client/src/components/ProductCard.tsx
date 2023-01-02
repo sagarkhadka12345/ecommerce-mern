@@ -127,14 +127,14 @@ const ProductCard = (props: Item) => {
 
         {user?.username !== "sagarkhadkammm" ? (
           <button
-            className="p-2 w-max bg-indigo-300 hover:bg-indigo-400 hover:text-black mx-auto shadow-lg"
+            className="p-2 w-max bg-indigo-300 hover:bg-indigo-400 hover:text-black mx-auto shadow-lg bg-indigo-500"
             onClick={addToCart}
           >
             Set to Cart
           </button>
         ) : (
           <button
-            className="p-2 w-max bg-indigo-300 hover:bg-indigo-400 hover:text-black mx-auto shadow-lg"
+            className="p-2 w-max bg-indigo-300 hover:bg-indigo-400 hover:text-black mx-auto shadow-lg bg-red-500"
             onClick={() => deleteProduct(props.productId)}
           >
             Delete
