@@ -30,27 +30,11 @@ export const createItemHandler = async (
       res.status(400).send(err);
     });
 };
-
-// export const createItemHandler = async (req: Request, res: Response) => {
-//     const {sellerId}= req.body.username
-//     const { name,price, type, productId, img} = req.body
-
-//     const Item = await ItemModel.create({
-//         _id: new mongoose.Types.ObjectId(),
-//         name, sellerId,price,type, productId,img
-
-//     })
-//     return Item.save()
-//         .then(() => {
-//             res.send(req.body)
-//         })
-//         .catch((err: any) => {
-//             if (err.code === 1000) {
-//                 return res.send("Item already created")
-//             }
-//             return res.send(err.message).status(200)
-//         })
-// }
+export const deleteItemhandler = async (req: Request, res: Response) => {
+ 
+  await ItemModel.findOneAndDelete({ productId: req.params.itemId });
+  return res.status(200).send("Product deleted");
+};
 
 export const findAllItems = async (req: Request, res: Response) => {
   const item = await ItemModel.find();

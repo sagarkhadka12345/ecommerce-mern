@@ -2,7 +2,11 @@ import { db } from "./DataBase/dataBase";
 import express, { Request, Response, NextFunction } from "express";
 import config from "./config/config";
 import logger from "./logger/logger";
-import { createItemHandler, findAllItems } from "./controllers/item.controller";
+import {
+  createItemHandler,
+  deleteItemhandler,
+  findAllItems,
+} from "./controllers/item.controller";
 import {
   createCartHandler,
   updateCartHandler,
@@ -26,6 +30,8 @@ import {
   findOrderByUsername,
   createOrderHandler,
   pushItems,
+  getAllOrders,
+  deleteOrder,
 } from "./controllers/order.controller";
 import cors from "cors";
 import jwt from "jsonwebtoken";
@@ -108,6 +114,7 @@ app.post("/api/cart/update", authenticateToken, updateCartHandler);
 app.post("/api/cart/remove", authenticateToken, removeItemHandler);
 app.get("/api/item/findAll", findAllItems);
 app.get("/api/item/find/:itemId", findItem);
+app.delete("/api/item/delete/:itemId", deleteItemhandler);
 app.get("/api/item/type/:typeId", findItemsByType);
 app.get("/api/item/seller/:seller", findItemsBySeller);
 
@@ -151,6 +158,8 @@ app.post("/api/user/forgotPassword", forgotPassword);
 app.post("/api/user/resetPassword", resetPassword);
 app.post("/api/order/pushItems", authenticateToken, pushItems);
 app.post("/api/order/createOrder", authenticateToken, createOrderHandler);
+app.get("/api/order/getAllOrders", getAllOrders);
+app.delete("/api/order/deleteOrder/:orderId", deleteOrder);
 
 app.use(express.static("build"));
 app.use("*", (req: Request, res: Response) => {

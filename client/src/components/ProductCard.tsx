@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Item, Token } from "../types/types";
-import { cartEndPoint } from "../Apis";
+import { cartEndPoint, itemEndPoint } from "../Apis";
 import image from "../images/ab.jpeg";
 import jwt from "jsonwebtoken";
 import swal from "sweetalert2";
-
+import { userEndPoint } from "../Apis";
 import axios from "axios";
+import { User } from "../types/types";
 const username = "sagarkhadka12345";
 
 const ProductCard = (props: Item) => {
@@ -55,7 +56,42 @@ const ProductCard = (props: Item) => {
         });
       });
   };
+  const api = `${userEndPoint}/findUser`;
+  const [user, setUser] = useState<User>();
 
+  useEffect(() => {
+    axios
+      .get(`${api}`, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((err) => console.log("Please login or create User"));
+  }, [api]);
+
+  const deleteProduct = async (id: string) => {
+    try {
+      const resp = await axios.delete(`${itemEndPoint}/delete/${id}`, {
+        headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+      });
+      swal
+        .fire({
+          icon: "success",
+          html: "The item has been Deleted",
+          showCloseButton: true,
+        })
+        .then(() => window.location.reload());
+    } catch (error) {
+      swal.fire({
+        icon: "error",
+        html: "Deletion error",
+        showCloseButton: true,
+      });
+    }
+  };
   return (
     <div className="mb-4">
       <div className="cart flex flex-col p-6 sm:p-4 m-2  bg-white rounded-md hover:bg-gray-300  shadow-md ">
@@ -74,28 +110,36 @@ const ProductCard = (props: Item) => {
           <div className="price p-2 my-2 text-amber-600"> ${props.price}</div>
         </div>
         <div className="seller-container px-4 pb-2 text-indigo-500">
-          {" "}
           Seller: &nbsp; {props.seller}
         </div>
         <div className="flex justify-between p-2 py-4 mb-2 relative">
           <div className="quantity px-2  tex-indigo-500 ">
-            Quantiy: {quantity}{" "}
+            Quantiy: {quantity}
             <button
               className="text-2xl absolute left-[6.5rem] top-[.7rem] border-2 border-gray-200 px-2"
               onClick={handleClick}
             >
               +
-            </button>{" "}
+            </button>
           </div>
           <div className="type px-2 text-indigo-500 ">{props.type}</div>
         </div>
 
-        <button
-          className="p-2 w-max bg-indigo-300 hover:bg-indigo-400 hover:text-black mx-auto shadow-lg"
-          onClick={addToCart}
-        >
-          Set to Cart
-        </button>
+        {user?.username !== "sagarkhadkammm" ? (
+          <button
+            className="p-2 w-max bg-indigo-300 hover:bg-indigo-400 hover:text-black mx-auto shadow-lg"
+            onClick={addToCart}
+          >
+            Set to Cart
+          </button>
+        ) : (
+          <button
+            className="p-2 w-max bg-indigo-300 hover:bg-indigo-400 hover:text-black mx-auto shadow-lg"
+            onClick={() => deleteProduct(props.productId)}
+          >
+            Delete
+          </button>
+        )}
       </div>
     </div>
   );

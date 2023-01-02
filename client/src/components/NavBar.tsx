@@ -73,8 +73,15 @@ const NavBar: React.FC = (): JSX.Element => {
           <div className="my-2 pl-4 sm:my-0 cursor-pointer hover:text-[#7510F7]">
             <Link to={"/carts"}>Cart</Link>
           </div>
+          {user?.username === "sagarkhadkammm" && (
+            <>
+              <div className="my-2 pl-4 sm:my-0 cursor-pointer hover:text-[#7510F7]">
+                <Link to={"/item"}>Create New Ad</Link>
+              </div>
+            </>
+          )}
           <div className="my-2 pl-4 sm:my-0 cursor-pointer hover:text-[#7510F7]">
-            <Link to={"/item"}>Create New Ad</Link>
+            <Link to={"/orders"}>Orders</Link>
           </div>
           {user?.username && (
             <div className="cmy-2 pl-4 sm:my-0 cursor-pointer hover:text-[#7510F7]">

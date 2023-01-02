@@ -11,9 +11,9 @@ import CreateItem from "./components/CreateItem";
 import Footer from "./components/Footer";
 import RegistrationForm from "./components/RegistrationForm";
 import MainLandingPage from "./components/MainLandingPage";
+import Order from "./components/Order";
 
 function App() {
-  
   return (
     <>
       <BrowserRouter>
@@ -23,8 +23,7 @@ function App() {
             path="/"
             element={
               <>
-              <MainLandingPage/>{" "}
-                {/* <ProductPage />{" "} */}
+                <MainLandingPage /> {/* <ProductPage />{" "} */}
               </>
             }
           />
@@ -35,7 +34,7 @@ function App() {
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/carts" element={<Cart />} />
           <Route path="/item" element={<CreateItem />} />
-        
+          <Route path="/orders" element={<Order />} />
         </Routes>
         <Footer />
       </BrowserRouter>
