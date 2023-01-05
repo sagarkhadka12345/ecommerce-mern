@@ -12,6 +12,7 @@ import Footer from "./components/Footer";
 import RegistrationForm from "./components/RegistrationForm";
 import MainLandingPage from "./components/MainLandingPage";
 import Order from "./components/Order";
+import Success from "./components/Success";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/carts" element={<Cart />} />
           <Route path="/item" element={<CreateItem />} />
+          <Route path="/success" element={<Success />} />
           <Route path="/orders" element={<Order />} />
         </Routes>
         <Footer />

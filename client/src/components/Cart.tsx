@@ -11,23 +11,34 @@ interface received {
     items: Array<CartItem>;
   };
 }
-async function handleStripe() {
-  const stripe = await getStripe();
-  const { error } = await stripe.redirectToCheckout({
-    lineItems: [
-      {
-        quantity: 1,
-        price: "price_1MKkzrG9ZwN3X5brnJgJgwgT",
-      },
-    ],
-    mode: "subscription",
-    successUrl: `http://localhost:3002/success`,
-    cancelUrl: `http://localhost:3002/cancel`,
-    customerEmail: "customer@email.com",
-  });
-}
 
 const CartComponent: React.FC = (): JSX.Element => {
+  async function handleStripe() {
+    try {
+      const stripe = await getStripe();
+      const { error } = await stripe.redirectToCheckout({
+        lineItems: [
+          {
+            quantity: 1,
+            price: "price_1MKkzrG9ZwN3X5brnJgJgwgT",
+          },
+        ],
+        mode: "subscription",
+        successUrl: `http://localhost:3002/success`,
+        cancelUrl: `http://localhost:3002/cancel`,
+        customerEmail: "customer@email.com",
+      });
+      if (error) {
+        console.log("====================================");
+        console.log(error);
+        console.log("====================================");
+      }
+    } catch (error) {
+      console.log("====================================");
+      console.log("Error");
+      console.log("====================================");
+    }
+  }
   //states
   const [cart, setCart] = useState<Cart[]>([]);
   // const [carts, setCarts] = useState<received>();
@@ -44,7 +55,7 @@ const CartComponent: React.FC = (): JSX.Element => {
   const removeItemEndPoint = `${cartEndPoint}/remove`;
 
   //some variables for the data
-  let totalQty = 0;
+  const totalQty = 0;
 
   let totalPrice = 0;
 
@@ -84,36 +95,6 @@ const CartComponent: React.FC = (): JSX.Element => {
   // const checkout = () => {};
   const isInitialMount = useRef(true);
   const item = cart.map((data: any) => data.items as any);
-
-  async function check() {
-    await axios
-      .post(
-        createOrderEndPoint,
-        {
-          items: item[0],
-          totalPrice: totalPrice,
-        },
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      ) 
-      .catch((err) => console.log(err));
-      
-      handleStripe(); 
-
-    await axios.post(
-      emptyCartEndPoint,
-      { username: "" },
-      {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }
-    );
-    window.location.reload();
-  }
 
   const checkOutHandler = async () => {
     swal
@@ -177,11 +158,9 @@ const CartComponent: React.FC = (): JSX.Element => {
             <div className="flex flex-col justify-center items-center">
               <div className="totalQty py-2">
                 TotalQuantity:
-                {
-                  (totalQty = data.items.reduce((currentSum, value) => {
-                    return (currentSum += value.quantity);
-                  }, 0))
-                }
+                {data.items.reduce((currentSum, value) => {
+                  return (currentSum += value.quantity);
+                }, 0)}
               </div>
               <div className="totalPrice py-2">
                 TotalPrice:

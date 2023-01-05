@@ -6,16 +6,18 @@ import { Order as TOrder, User } from "../types/types";
 import { userEndPoint } from "../Apis";
 import moment from "moment";
 const Order = () => {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<TOrder[]>([]);
   const api = `${userEndPoint}/findUser`;
   const fetchOrder = async () => {
     try {
+      const orders: TOrder[] = [];
       const res = await axios.get(`${orderEndPoint}/getAllOrders`, {
         headers: { Authorization: "Bearer " + localStorage.getItem("token") },
       });
-      setOrders(user?.username === "sagarkhadkammm"
-      ? res.data
-      : res.data.filter((item: TOrder) => item.username === user?.username));
+
+      setOrders(
+        res.data.filter((item: TOrder) => item.username == user?.username)
+      );
     } catch (error) {
       swal.fire({
         icon: "error",

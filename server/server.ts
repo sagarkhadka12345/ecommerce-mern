@@ -45,10 +45,12 @@ import { newItemSchema } from "./Models/item.model";
 import path from "path";
 import bodyParser from "body-parser";
 import multer from "multer";
+import { emptyCartService } from "./service/cart.service";
 const Stripe = require("stripe");
 const stripe = Stripe(
   "sk_test_51MA1w7G9ZwN3X5brgRNkQLV1F6sgvTMVrpoMYUvElldIGToP1115fat1mITTFqIn2PMc3LK3V3Z9D4vvwBICokM000S3vgT2YU"
 );
+
 db;
 const app = express();
 
@@ -67,7 +69,39 @@ const pricesa = async () => {
   } catch (error) {}
 };
 pricesa();
+const endpointSecret =
+  "whsec_ed282d6b3d8b224c33fe3e98888caa30bff51adbce6f5d1f944dda09c2bc11f3";
 
+app.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  (request, response) => {
+    const sig = request.headers["stripe-signature"];
+
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    } catch (err: any) {
+      response.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
+
+    // Handle the event
+    switch (event.type) {
+      case "payment_intent.succeeded":
+        const paymentIntent = event.data.object;
+
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
+  }
+);
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
