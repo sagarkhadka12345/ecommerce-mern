@@ -7,6 +7,7 @@ import { userEndPoint } from "../Apis";
 import moment from "moment";
 const Order = () => {
   const [orders, setOrders] = useState<TOrder[]>([]);
+  const [user, setUser] = useState<User>();
   const api = `${userEndPoint}/findUser`;
   const fetchOrder = async () => {
     try {
@@ -14,7 +15,7 @@ const Order = () => {
       const res = await axios.get(`${orderEndPoint}/getAllOrders`, {
         headers: { Authorization: "Bearer " + localStorage.getItem("token") },
       });
-     
+
       setOrders(
         res.data.filter((item: TOrder) => item.username == user?.username)
       );
@@ -28,7 +29,7 @@ const Order = () => {
   };
   useEffect(() => {
     fetchOrder();
-  }, [orders.length]);
+  }, [orders.length, user?.username]);
   const handleOrderDelete = async (id: string) => {
     try {
       const resp = await axios.delete(`${orderEndPoint}/deleteOrder/${id}`, {
@@ -49,7 +50,6 @@ const Order = () => {
       });
     }
   };
-  const [user, setUser] = useState<User>();
   useEffect(() => {
     axios
       .get(`${api}`, {

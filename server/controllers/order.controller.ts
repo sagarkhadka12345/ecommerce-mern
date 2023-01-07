@@ -5,12 +5,13 @@ import {
   findOrderServiceByUsername,
   pushItemsService,
 } from "../service/order.service";
-
+import crypto from "crypto";
 export const createOrderHandler = async (req: Request, res: Response) => {
   const { username, items, totalPrice } = req.body;
-
+  const orderId = crypto.randomBytes(12).toString("hex");
   const Cart = await OrderModel.create({
     _id: new mongoose.Types.ObjectId(),
+    orderId,
     username,
     items,
     totalPrice,
