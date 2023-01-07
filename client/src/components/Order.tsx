@@ -14,7 +14,7 @@ const Order = () => {
       const res = await axios.get(`${orderEndPoint}/getAllOrders`, {
         headers: { Authorization: "Bearer " + localStorage.getItem("token") },
       });
-
+     
       setOrders(
         res.data.filter((item: TOrder) => item.username == user?.username)
       );
@@ -28,7 +28,7 @@ const Order = () => {
   };
   useEffect(() => {
     fetchOrder();
-  }, []);
+  }, [orders.length]);
   const handleOrderDelete = async (id: string) => {
     try {
       const resp = await axios.delete(`${orderEndPoint}/deleteOrder/${id}`, {
