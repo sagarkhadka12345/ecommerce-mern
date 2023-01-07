@@ -42,6 +42,10 @@ const createCartHandler = (req, res) => __awaiter(void 0, void 0, void 0, functi
     });
     return Cart.save()
         .catch((err) => {
+        if (err.status = 11000) {
+            return res.send("user already").status(400);
+        }
+        console.log(err);
         res.status(500).send(err);
     });
 });

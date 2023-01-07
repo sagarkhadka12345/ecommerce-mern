@@ -14,8 +14,8 @@ const typegoose_1 = require("@typegoose/typegoose");
 class Cart {
 }
 __decorate([
-    (0, typegoose_1.prop)({ required: true, unique: true }),
-    __metadata("design:type", Object)
+    (0, typegoose_1.prop)({ required: true }),
+    __metadata("design:type", String)
 ], Cart.prototype, "username", void 0);
 __decorate([
     (0, typegoose_1.prop)({}),

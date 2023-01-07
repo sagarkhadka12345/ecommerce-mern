@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "file-loader": "^6.2.0"
+  },
+  "scripts": {
+    "start": "cd server && yarn start"
   }
 }

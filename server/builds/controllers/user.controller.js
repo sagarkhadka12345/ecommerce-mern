@@ -1,11 +1,7 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -42,6 +38,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const bcrypt = __importStar(require("bcrypt"));
 const user_service_1 = require("../service/user.service");
 const crypto_1 = __importDefault(require("crypto"));
+const mailer_1 = require("../helpers/mailer");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config/config"));
 dotenv_1.default.config();
@@ -56,14 +53,16 @@ const createUserHandler = (req, res) => __awaiter(void 0, void 0, void 0, functi
         firstname,
         lastname,
     });
-    return user.save()
+    return user
+        .save()
         .then(() => {
         const token = jsonwebtoken_1.default.sign({ username: username }, config_1.default.access.secret);
-        res.send(token);
+        return res.status(200).send(token);
     })
         .catch((err) => {
-        if (err.code === 1000) {
-            return res.send("User already cready");
+        console.log(err);
+        if (err.code === 11000) {
+            return res.send("User already created");
         }
         return res.send(err.message).status(200);
     });
@@ -71,14 +70,20 @@ const createUserHandler = (req, res) => __awaiter(void 0, void 0, void 0, functi
 exports.createUserHandler = createUserHandler;
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password } = req.body;
+    console.log("====================================");
+    console.log(req.body);
+    console.log("====================================");
     const user = yield (0, user_service_1.findUserService)(username);
-    if (user && (yield user.comparePassword(password))) {
+    console.log("====================================");
+    console.log(user);
+    console.log("====================================");
+    if (user &&
+        Object.entries(user).length !== 0 &&
+        (yield user.comparePassword(password))) {
         const token = jsonwebtoken_1.default.sign({ username: username }, config_1.default.access.secret);
         return res.status(200).send(token);
     }
-    return res
-        .status(500)
-        .send("Invalid email or password");
+    return res.status(500).send("Invalid email or password");
 });
 exports.loginUser = loginUser;
 const findAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -93,9 +98,7 @@ const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
         yield (0, user_service_1.changePasswordService)(username, password, newPassword);
         return res.status(200).send(user);
     }
-    return res
-        .status(500)
-        .send("Invalid email or password");
+    return res.status(500).send("Invalid email or password");
 });
 exports.changePassword = changePassword;
 const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -104,22 +107,27 @@ const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
     if (!user) {
         return res.send("User doesn't exist");
     }
-    const token = crypto_1.default.randomBytes(12).toString('hex');
+    const token = crypto_1.default.randomBytes(12).toString("hex");
     const update = yield user_model_1.UserModel.updateOne({
-        username
+        username,
     }, {
         $set: {
-            resetPassword: token
-        }
+            resetPassword: token,
+        },
     });
-    // await sendMail({from: "sagarkhadka@mail.com", to: "sagarkhadka@mail.com", subject: "Forgot Password", html: `<a href='${token}'<button>Reset Password</button>` })
-    return res.status(404).send(token);
+    yield (0, mailer_1.sendMail)({
+        from: "sagar.khadka2001@mail.com",
+        to: "sagar.khadka2001@gmail.com",
+        subject: "Forgot Password",
+        html: `<a href='${token}'<button>Reset Password</button>`,
+    });
+    return res.status(200).send(token);
 });
 exports.forgotPassword = forgotPassword;
 const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password, token } = req.body;
     const user = yield (0, user_service_1.findUserService)(username);
-    const newToken = crypto_1.default.randomBytes(12).toString('hex');
+    const newToken = crypto_1.default.randomBytes(12).toString("hex");
     const hash = yield bcrypt.hash(password, 10);
     if (user && user.compareToken(token)) {
         yield (0, user_service_1.resetPasswordService)(username, newToken, hash);
@@ -130,7 +138,12 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.resetPassword = resetPassword;
 const findUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username } = req.body.username;
-    const user = yield (0, user_service_1.findUserService)(username);
-    return res.status(200).send(req.body);
+    try {
+        const result = yield (0, user_service_1.findUserService)(username);
+        res.send(req.body).status(200);
+    }
+    catch (error) {
+        res.status(400).send(error);
+    }
 });
 exports.findUser = findUser;

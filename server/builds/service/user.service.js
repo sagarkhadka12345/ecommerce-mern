@@ -19,7 +19,7 @@ const item_model_1 = require("../Models/item.model");
 function findUserService(username) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield user_model_1.UserModel.findOne({
-            username
+            username,
         });
     });
 }
@@ -27,11 +27,11 @@ exports.findUserService = findUserService;
 function changePasswordService(username, password, newPassword) {
     return __awaiter(this, void 0, void 0, function* () {
         return user_model_1.UserModel.updateOne({
-            username
+            username,
         }, {
             $set: {
-                password: yield bcrypt_1.default.hash(newPassword, 10)
-            }
+                password: yield bcrypt_1.default.hash(newPassword, 10),
+            },
         });
     });
 }
@@ -39,11 +39,11 @@ exports.changePasswordService = changePasswordService;
 function forgotPasswordService(username, token) {
     return __awaiter(this, void 0, void 0, function* () {
         return user_model_1.UserModel.updateOne({
-            username
+            username,
         }, {
             $set: {
-                resetPassword: token
-            }
+                resetPassword: token,
+            },
         });
     });
 }
@@ -51,12 +51,12 @@ exports.forgotPasswordService = forgotPasswordService;
 function resetPasswordService(username, newToken, password) {
     return __awaiter(this, void 0, void 0, function* () {
         return user_model_1.UserModel.updateOne({
-            username
+            username,
         }, {
             $set: {
                 password: password,
-                resetPassword: newToken
-            }
+                resetPassword: newToken,
+            },
         });
     });
 }

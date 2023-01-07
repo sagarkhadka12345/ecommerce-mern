@@ -14,11 +14,11 @@ const order_model_1 = require("../Models/order.model");
 function pushItemsService(username, item) {
     return __awaiter(this, void 0, void 0, function* () {
         const order = yield order_model_1.OrderModel.findOneAndUpdate({
-            username: username
+            username: username,
         }, {
             $push: {
-                items: item
-            }
+                items: item,
+            },
         });
         return order;
     });
@@ -26,7 +26,7 @@ function pushItemsService(username, item) {
 exports.pushItemsService = pushItemsService;
 function findOrderServiceByUsername(username) {
     return order_model_1.OrderModel.find({
-        username
+        username,
     });
 }
 exports.findOrderServiceByUsername = findOrderServiceByUsername;
