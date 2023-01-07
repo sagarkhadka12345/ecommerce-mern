@@ -7,28 +7,6 @@ const Success = () => {
   const createOrderEndPoint = `${orderEndPoint}/createOrder`;
   const findCartEndPoint = `${cartEndPoint}/findCart`;
   const removeItemEndPoint = `${cartEndPoint}/remove`;
-  const [cart, setCart] = useState([]);
-  const item = cart.map((data: any) => data.items as any)[0];
-
-  useEffect(() => {
-    axios
-      .get(findCartEndPoint, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((res) => {
-        return setCart(res.data);
-      })
-      .catch((err: any) => {
-        console.log("====================================");
-        console.log(err);
-        console.log("====================================");
-      });
-    check();
-    // window.location.href = "/carts";
-  }, []);
-
   async function check() {
     await axios
       .post(
@@ -59,6 +37,24 @@ const Success = () => {
       }
     );
   }
+  const [cart, setCart] = useState([]);
+  const item = cart.map((data: any) => data.items as any)[0];
+  const fetchCart = async () => {
+    axios
+      .get(findCartEndPoint, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((res) => {
+        setCart(res.data);
+      });
+    await check();
+  };
+  useEffect(() => {
+    fetchCart();
+    window.location.href = "/cart";
+  }, []);
 
   return <div></div>;
 };
