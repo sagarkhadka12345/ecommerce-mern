@@ -17,11 +17,14 @@ const Success = () => {
         },
       })
       .then((res) => {
+        console.log("====================================");
+        console.log(res);
+        console.log("====================================");
         setUser(res.data);
       })
       .catch((err) => console.log("Please login or create User"));
   }, [api]);
-  async function check() {
+  async function check(item: Array<any>) {
     await axios
       .post(
         createOrderEndPoint,
@@ -52,7 +55,7 @@ const Success = () => {
     );
   }
   const [cart, setCart] = useState([]);
-  const item = cart.map((data: any) => data.items as any)[0];
+
   const fetchCart = async () => {
     axios
       .get(findCartEndPoint, {
@@ -61,14 +64,19 @@ const Success = () => {
         },
       })
       .then((res) => {
+        console.log("====================================");
+        console.log(res);
+        console.log("====================================");
         setCart(res.data);
+        check(res.data.map((data: any) => data.items as any)[0]).then(() => {
+          window.location.href = "/carts";
+        });
       });
-    await check();
   };
 
   useEffect(() => {
     fetchCart();
-    window.location.href = "/cart";
+    // window.location.href = "/cart";
   }, [user]);
 
   return <div></div>;
