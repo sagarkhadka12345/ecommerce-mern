@@ -1,12 +1,26 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { cartEndPoint, orderEndPoint } from "../Apis";
+import { cartEndPoint, orderEndPoint, userEndPoint } from "../Apis";
 import { CartItem } from "../types/types";
 const Success = () => {
   const emptyCartEndPoint = `${cartEndPoint}/emptyCart`;
   const createOrderEndPoint = `${orderEndPoint}/createOrder`;
   const findCartEndPoint = `${cartEndPoint}/findCart`;
   const removeItemEndPoint = `${cartEndPoint}/remove`;
+  const api = `${userEndPoint}/findUser`;
+  const [user, setUser] = useState();
+  useEffect(() => {
+    axios
+      .get(`${api}`, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((err) => console.log("Please login or create User"));
+  }, [api]);
   async function check() {
     await axios
       .post(
@@ -29,7 +43,7 @@ const Success = () => {
 
     await axios.post(
       emptyCartEndPoint,
-      { username: "" },
+      { username: user },
       {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
@@ -51,10 +65,11 @@ const Success = () => {
       });
     await check();
   };
+
   useEffect(() => {
     fetchCart();
     window.location.href = "/cart";
-  }, []);
+  }, [user]);
 
   return <div></div>;
 };
