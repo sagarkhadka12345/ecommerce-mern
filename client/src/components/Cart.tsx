@@ -131,7 +131,7 @@ const CartComponent: React.FC = (): JSX.Element => {
                   <div className="m-2  flex flex-col">
                     <img
                       className="itemImage my-2"
-                      src={image}
+                      src={data.img}
                       alt="image not Found"
                     ></img>
                     <div
