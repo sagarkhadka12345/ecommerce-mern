@@ -83,7 +83,7 @@ const Order = () => {
                 {item.orderId}
               </td>
               <td className="px-4 py-2 border-b-2 border-gray-400">
-                {moment.unix(+item.date).format("YYYY-MM-DD")}
+                {moment(+item.date).format("YYYY-MM-DD")}
               </td>
 
               <td className="px-4 py-2 border-b-2 border-gray-400">
