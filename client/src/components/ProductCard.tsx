@@ -35,6 +35,7 @@ const ProductCard = (props: Item) => {
             type: props.type,
             quantity: quantity,
             productId: props.productId,
+            img: props.img,
           },
         },
         {

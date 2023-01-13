@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { cartEndPoint, orderEndPoint } from "../Apis";
+import { cartEndPoint, itemEndPoint, orderEndPoint } from "../Apis";
 import axios from "axios";
 import { Cart, CartItem } from "../types/types";
 import image from "../images/ab.jpeg";
@@ -112,6 +112,7 @@ const CartComponent: React.FC = (): JSX.Element => {
         }
       });
   };
+  console.log(cart);
 
   if (cart.length > 0) {
     return (
@@ -123,37 +124,39 @@ const CartComponent: React.FC = (): JSX.Element => {
               key={index}
               className="item my-2 py-2 px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  m-2 shadow-sm"
             >
-              {data.items.map((data: CartItem, index) => (
-                <div
-                  key={index}
-                  className="border-2 relative  bg-white m-4 p-4"
-                >
-                  <div className="m-2  flex flex-col">
-                    <img
-                      className="itemImage my-2"
-                      src={data.img}
-                      alt="image not Found"
-                    ></img>
-                    <div
-                      className="absolute right-2  top-3 hover:cursor-pointer text-2xl"
-                      onClick={() => {
-                        setProductId(data.productId);
-                        remove();
-                      }}
-                    >
-                      X
+              {data.items.map((data: CartItem, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="border-2 relative  bg-white m-4 p-4"
+                  >
+                    <div className="m-2  flex flex-col">
+                      <img
+                        className="itemImage my-2"
+                        src={`/api/v1/image/item/${data.img}`}
+                        alt="image not Found"
+                      ></img>
+                      <div
+                        className="absolute right-2  top-3 hover:cursor-pointer text-2xl"
+                        onClick={() => {
+                          setProductId(data.productId);
+                          remove();
+                        }}
+                      >
+                        X
+                      </div>
+                    </div>
+                    <div className="flex justify-between mx-2 items-center">
+                      <div className="itemName my-2 ">{data.name}</div>
+                      <div className="itemPrice my-2">${data.price}</div>
+                    </div>
+
+                    <div className="itemQty my-2 mb-4  mx-2">
+                      Quantity: {data.quantity}
                     </div>
                   </div>
-                  <div className="flex justify-between mx-2 items-center">
-                    <div className="itemName my-2 ">{data.name}</div>
-                    <div className="itemPrice my-2">${data.price}</div>
-                  </div>
-
-                  <div className="itemQty my-2 mb-4  mx-2">
-                    Quantity: {data.quantity}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="flex flex-col justify-center items-center">
               <div className="totalQty py-2">
