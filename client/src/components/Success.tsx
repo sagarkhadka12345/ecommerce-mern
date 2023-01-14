@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { cartEndPoint, orderEndPoint, userEndPoint } from "../Apis";
-import { CartItem } from "../types/types";
+import { Cart, CartItem } from "../types/types";
 const Success = () => {
   const emptyCartEndPoint = `${cartEndPoint}/emptyCart`;
   const createOrderEndPoint = `${orderEndPoint}/createOrder`;
   const findCartEndPoint = `${cartEndPoint}/findCart`;
   const removeItemEndPoint = `${cartEndPoint}/remove`;
   const api = `${userEndPoint}/findUser`;
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
   useEffect(() => {
     axios
       .get(`${api}`, {
@@ -17,36 +17,38 @@ const Success = () => {
         },
       })
       .then((res) => {
-        console.log("====================================");
-        console.log(res);
-        console.log("====================================");
         setUser(res.data);
       })
       .catch((err) => console.log("Please login or create User"));
   }, [api]);
   async function check(item: Array<any>) {
-    await axios
-      .post(
-        createOrderEndPoint,
-        {
-          items: item,
-          totalPrice: item.reduce(
-            (p: any, s: any) => s.price * s.quantity + p,
-            0
-          ),
-        },
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      )
-      .then((re) => console.log(re))
-      .catch((err) => console.log(err));
+    const res = await axios.get(findCartEndPoint, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
 
     await axios.post(
       emptyCartEndPoint,
-      { username: user },
+      { username: user, items: res.data[0].items },
+      {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    );
+    console.log("====================================");
+    console.log("I am Here");
+    console.log("====================================");
+    await axios.post(
+      createOrderEndPoint,
+      {
+        items: item,
+        totalPrice: item.reduce(
+          (p: any, s: any) => s.price * s.quantity + p,
+          0
+        ),
+      },
       {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
@@ -54,6 +56,7 @@ const Success = () => {
       }
     );
   }
+
   const [cart, setCart] = useState([]);
 
   const fetchCart = async () => {
@@ -64,9 +67,6 @@ const Success = () => {
         },
       })
       .then((res) => {
-        console.log("====================================");
-        console.log(res);
-        console.log("====================================");
         setCart(res.data);
         check(res.data.map((data: any) => data.items as any)[0]).then(() => {
           window.location.href = "/carts";
@@ -77,7 +77,7 @@ const Success = () => {
   useEffect(() => {
     fetchCart();
     // window.location.href = "/cart";
-  }, [user]);
+  }, []);
 
   return <div></div>;
 };

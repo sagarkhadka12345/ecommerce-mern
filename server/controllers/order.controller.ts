@@ -8,7 +8,13 @@ import {
 import crypto from "crypto";
 export const createOrderHandler = async (req: Request, res: Response) => {
   const { username, items, totalPrice } = req.body;
+  console.log("====================================");
+  console.log("Here");
+  console.log("====================================");
+  console.log("====================================");
+
   const orderId = crypto.randomBytes(12).toString("hex");
+  
   const Cart = await OrderModel.create({
     _id: new mongoose.Types.ObjectId(),
     orderId,
